@@ -1,0 +1,37 @@
+# Accepted vulnerabilities for the daily container scan.
+#
+# Entries here are EXCLUDED from the scan report and the alert. Accept a CVE only
+# with an honest justification and an expiry (`expired_at`) so it auto-resurfaces
+# for re-review. The standard reason below is "no upstream fix available yet" —
+# these are OS-package CVEs the distro has not patched, so they cannot be fixed
+# by a rebuild today; they are tracked and re-reviewed at expiry (or when a fixed
+# package ships). This is acceptance-with-tracking, NOT a claim of
+# non-exploitability unless explicitly stated.
+#
+# Reviewed: 2026-06-12. Re-review by: 2026-09-12.
+
+vulnerabilities:
+  - id: CVE-2023-45853
+    statement: >-
+      zlib1g (MiniZip). No fixed version in Debian bookworm. The vulnerable
+      MiniZip contrib code is not used by the kdbl binaries. Tracked.
+    expired_at: 2026-09-12
+
+  - id: CVE-2026-42496
+    statement: >-
+      perl-base. No upstream Debian/Ubuntu fix available as of 2026-06-12.
+      Tracked; will clear on rebuild once a fixed package ships.
+    expired_at: 2026-09-12
+
+  - id: CVE-2026-8376
+    statement: >-
+      perl-base. No upstream Debian/Ubuntu fix available as of 2026-06-12.
+      Tracked; will clear on rebuild once a fixed package ships.
+    expired_at: 2026-09-12
+
+  - id: CVE-2026-40393
+    statement: >-
+      mesa (libgbm1 / libgl1-mesa-dri / libglx-mesa0 / mesa-libgallium) in the
+      docling extractor. No fixed version available as of 2026-06-12. Pulled in
+      transitively; reassess whether GL/mesa is required at all. Tracked.
+    expired_at: 2026-09-12

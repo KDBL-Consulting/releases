@@ -1,21 +1,26 @@
 name: container-security-scan
 
 # Daily vulnerability scan of the published KDBL container images. Pulls each
-# image from GHCR, scans with Trivy (OS + language dependencies, all
-# severities), commits a dated summary report, keeps the detailed SARIF/JSON as
-# downloadable artifacts, and raises an issue if any CRITICAL is found.
+# image from GHCR, scans with Trivy (OS + language dependencies), commits a
+# rolling summary that separates ACTIONABLE (a fix is available) from NO-FIX
+# (no upstream patch yet) findings, keeps detailed SARIF/JSON as artifacts, and
+# raises an issue when there are actionable (fixable) critical/high findings.
 #
-# The value is continuous monitoring: the CVE feeds update daily, so an image
-# that was clean at release can pick up new criticals later — this catches that.
+# Accepted CVEs (e.g. no-fix OS packages, with justification + expiry) live in
+# .trivyignore.yaml and are excluded from the report and the alert.
+#
+# The value is continuous monitoring: CVE feeds update daily, so an image that
+# was clean at release can pick up new findings — this catches that, and tells
+# you which ones you can actually do something about.
 #
 # Auth to pull the private packages: set a repo secret `GHCR_READ_TOKEN` (a PAT
-# with `read:packages`). Without it, the job falls back to the repo GITHUB_TOKEN,
+# with `read:packages`). Without it the job falls back to the repo GITHUB_TOKEN,
 # which only works if each package grants this repo access
 # (Package → Package settings → Manage Actions access → add `releases`).
 #
-# Surfacing in the Security tab: SARIF is kept as artifacts here. To push it to
-# the Security tab, add a `github/codeql-action/upload-sarif` step — that needs a
-# public repo, or GitHub Advanced Security on a private one.
+# SARIF is kept as artifacts. To surface it in the Security tab, add a
+# `github/codeql-action/upload-sarif` step — needs a public repo or GitHub
+# Advanced Security on a private one.
 
 on:
   schedule:
@@ -30,7 +35,7 @@ on:
 permissions:
   contents: write   # commit the report
   packages: read    # pull the images (with GITHUB_TOKEN fallback)
-  issues: write     # raise an alert issue on criticals
+  issues: write     # raise an alert issue on actionable findings
 
 concurrency:
   group: security-scan
@@ -72,43 +77,52 @@ jobs:
         run: |
           set -euo pipefail
           DATE=$(date -u +%Y-%m-%d)
+          IGNORE="${GITHUB_WORKSPACE}/.trivyignore.yaml"
+          ACCEPTED=$(grep -cE '^[[:space:]]*- id:' "$IGNORE" 2>/dev/null || echo 0)
           mkdir -p artifacts security/history
           REPORT="security/history/scan-${DATE}.md"
-          CRIT_TOTAL=0; HIGH_TOTAL=0
+          FC_T=0; NC_T=0; FH_T=0; NH_T=0
           {
             echo "# Container security scan — ${DATE}"
             echo
-            echo "Scanned \`${TAG}\` of each published image with Trivy (OS + library, all severities)."
+            echo "Scanned \`${TAG}\` of each published image with Trivy (OS + library)."
+            echo "Columns split **actionable** (a fixed version exists) from **no-fix** (no upstream"
+            echo "patch yet). ${ACCEPTED} accepted CVE(s) are excluded — see [\`.trivyignore.yaml\`](.trivyignore.yaml)."
             echo
-            echo "| Image | Critical | High | Medium | Low | Unknown |"
-            echo "| --- | --- | --- | --- | --- | --- |"
+            echo "| Image | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |"
+            echo "| --- | --- | --- | --- | --- |"
           } > "$REPORT"
-          # Pull → scan → remove per image so peak disk stays bounded (the CUDA
-          # image is multi-GB). One scan each: JSON drives the summary + an
-          # artifact, then `trivy convert` derives SARIF without re-scanning.
+          # JSON drives the summary + an artifact; `trivy convert` derives SARIF
+          # without re-scanning. Pull→scan→remove keeps peak disk bounded.
           for img in $IMAGES; do
-            ref="${ORG}/${img}:${TAG}"
+            ref="${ORG}/${img}:${TAG}"; f="artifacts/${img}.json"
             echo "::group::scan ${img}"
             docker pull -q "$ref"
-            trivy image --quiet --scanners vuln --format json -o "artifacts/${img}.json" "$ref"
-            trivy convert --format sarif --output "artifacts/${img}.sarif" "artifacts/${img}.json"
-            counts=$(jq -r '[.Results[]?.Vulnerabilities[]?.Severity] | group_by(.) | map({key:.[0], value:length}) | from_entries' "artifacts/${img}.json")
-            c=$(jq -r '.CRITICAL // 0' <<<"$counts"); h=$(jq -r '.HIGH // 0' <<<"$counts")
-            m=$(jq -r '.MEDIUM // 0' <<<"$counts"); l=$(jq -r '.LOW // 0' <<<"$counts"); u=$(jq -r '.UNKNOWN // 0' <<<"$counts")
-            echo "| \`${img}\` | ${c} | ${h} | ${m} | ${l} | ${u} |" >> "$REPORT"
-            CRIT_TOTAL=$((CRIT_TOTAL + c)); HIGH_TOTAL=$((HIGH_TOTAL + h))
+            trivy image --quiet --scanners vuln --ignorefile "$IGNORE" --format json -o "$f" "$ref"
+            trivy convert --format sarif --output "artifacts/${img}.sarif" "$f"
+            sev() { jq "[.Results[]?.Vulnerabilities[]? | select(.Severity==\"$1\")$2] | length" "$f"; }
+            fc=$(sev CRITICAL ' | select((.FixedVersion//"")!="")'); nc=$(sev CRITICAL ' | select((.FixedVersion//"")=="")')
+            fh=$(sev HIGH     ' | select((.FixedVersion//"")!="")'); nh=$(sev HIGH     ' | select((.FixedVersion//"")=="")')
+            m=$(sev MEDIUM ''); l=$(sev LOW '')
+            echo "| \`${img}\` | ${fc} / ${nc} | ${fh} / ${nh} | ${m} | ${l} |" >> "$REPORT"
+            FC_T=$((FC_T+fc)); NC_T=$((NC_T+nc)); FH_T=$((FH_T+fh)); NH_T=$((NH_T+nh))
             docker image rm "$ref" >/dev/null 2>&1 || true
             echo "::endgroup::"
           done
+          ACTIONABLE=$((FC_T+FH_T))
           {
             echo
-            echo "**Totals:** ${CRIT_TOTAL} critical, ${HIGH_TOTAL} high."
+            echo "**Actionable (fixed version available — rebuild to clear): ${FC_T} critical, ${FH_T} high.**"
+            echo
+            echo "No upstream fix yet: ${NC_T} critical, ${NH_T} high (tracked; re-review at expiry)."
             echo
             echo "_Generated by \`.github/workflows/container-security-scan.yml\`. Detailed SARIF + JSON are attached as workflow artifacts._"
           } >> "$REPORT"
           cp "$REPORT" SECURITY-REPORT.md
           {
-            echo "crit=${CRIT_TOTAL}"; echo "high=${HIGH_TOTAL}"; echo "date=${DATE}"
+            echo "date=${DATE}"; echo "actionable=${ACTIONABLE}"
+            echo "fix_crit=${FC_T}"; echo "fix_high=${FH_T}"
+            echo "nofix_crit=${NC_T}"; echo "nofix_high=${NH_T}"
           } >> "$GITHUB_OUTPUT"
           echo "----- report -----"; cat SECURITY-REPORT.md
 
@@ -128,21 +142,21 @@ jobs:
           if git diff --cached --quiet; then
             echo "no change to commit"
           else
-            git commit -m "security: daily scan ${{ steps.scan.outputs.date }} (crit=${{ steps.scan.outputs.crit }}, high=${{ steps.scan.outputs.high }})"
+            git commit -m "security: daily scan ${{ steps.scan.outputs.date }} (actionable: ${{ steps.scan.outputs.fix_crit }} crit / ${{ steps.scan.outputs.fix_high }} high)"
             git push
           fi
 
-      - name: Raise/refresh issue on CRITICAL findings
-        if: ${{ steps.scan.outputs.crit != '0' }}
+      - name: Raise/refresh issue on actionable findings
+        if: ${{ steps.scan.outputs.actionable != '0' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          CRIT: ${{ steps.scan.outputs.crit }}
-          HIGH: ${{ steps.scan.outputs.high }}
+          FC: ${{ steps.scan.outputs.fix_crit }}
+          FH: ${{ steps.scan.outputs.fix_high }}
           DATE: ${{ steps.scan.outputs.date }}
         run: |
           set -euo pipefail
-          title="Security: ${CRIT} critical finding(s) in published images"
-          body="Daily Trivy scan on ${DATE} found **${CRIT} critical** and **${HIGH} high** finding(s) across the published images. See \`SECURITY-REPORT.md\` and the workflow artifacts for detail."
+          title="Security: ${FC} critical / ${FH} high fixable finding(s) in published images"
+          body="Daily Trivy scan on ${DATE} found **${FC} critical** and **${FH} high** finding(s) that have a **fixed version available** — rebuild the affected image(s) to clear them. See \`SECURITY-REPORT.md\` and the workflow artifacts for detail. (No-fix CVEs are tracked in \`.trivyignore.yaml\`.)"
           gh label create security-scan --color B60205 --description "Automated container scan findings" 2>/dev/null || true
           existing=$(gh issue list --label security-scan --state open --json number --jq '.[0].number' 2>/dev/null || true)
           if [ -n "${existing:-}" ]; then
