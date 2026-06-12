@@ -50,6 +50,16 @@ Please raise product issues through this repository's **[Issues](../../issues)**
 
 Choose **Watch → Custom → Releases** on this repository to be notified of every new release. Each release's notes summarise what's new, improved, and fixed.
 
+## Security
+
+We take supply-chain security seriously:
+
+- **Daily vulnerability scans** of every published image (Trivy) — see the rolling [security report](SECURITY-REPORT.md).
+- **SBOM + build provenance** attached to each image.
+- **Image signing** (cosign) — *in progress*.
+
+Report a vulnerability privately to **security@kdbl.co.uk** — see our [Security Policy](SECURITY.md). Please don't open a public issue for security matters.
+
 ## Licence &amp; terms
 
 The KDBL Knowledge Layer and all related software, container images, and materials are **proprietary** and **licensed, not sold**. Your use is governed by:
