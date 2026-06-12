@@ -32,8 +32,13 @@ practise coordinated disclosure and are glad to credit reporters who wish it.
 - **Minimal, current base images** and a least-privilege runtime posture
   (non-root where possible; capabilities granted only where a backend requires
   them).
-- **Image signing** with [cosign](https://github.com/sigstore/cosign) — *in
-  progress*; verification instructions will be published here when available.
+- **Image signing** with [cosign](https://github.com/sigstore/cosign). Releases
+  are signed with our key — the public key is published here as
+  [`cosign.pub`](cosign.pub). Verify an image before you run it:
+
+  ```bash
+  cosign verify --key cosign.pub ghcr.io/kdbl-consulting/kdbl-worker:<version>
+  ```
 
 > Detailed, per-CVE breakdowns are available to licensed and evaluation
 > customers on request. We publish summaries publicly rather than a full

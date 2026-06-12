@@ -56,7 +56,7 @@ We take supply-chain security seriously:
 
 - **Daily vulnerability scans** of every published image (Trivy) — see the rolling [security report](SECURITY-REPORT.md).
 - **SBOM + build provenance** attached to each image.
-- **Image signing** (cosign) — *in progress*.
+- **Image signing** (cosign) — releases are signed; verify with [`cosign.pub`](cosign.pub).
 
 Report a vulnerability privately to **security@kdbl.co.uk** — see our [Security Policy](SECURITY.md). Please don't open a public issue for security matters.
 
