@@ -9,9 +9,9 @@ patch yet). 4 accepted CVE(s) are excluded — see [`.trivyignore.yaml`](.trivyi
 | `kdbl-worker` | 0 / 0 | 0 / 7 | 71 | 94 |
 | `kdbl-ui` | 0 / 0 | 0 / 6 | 48 | 103 |
 | `docling-extractor` | 0 / 0 | 0 / 12 | 49 | 98 |
-| `docling-extractor-cuda` | 0 / 0 | 12 / 0 | 82 | 50 |
+| `docling-extractor-cuda` | 0 / 0 | 0 / 0 | 33 | 9 |
 
-**Actionable (fixed version available — rebuild to clear): 0 critical, 12 high.**
+**Actionable (fixed version available — rebuild to clear): 0 critical, 0 high.**
 
 No upstream fix yet: 0 critical, 25 high (tracked; re-review at expiry).
 
