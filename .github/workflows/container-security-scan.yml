@@ -179,3 +179,19 @@ jobs:
           else
             gh issue create --title "$title" --body "$body" --label security-scan
           fi
+
+      - name: Close the scan issue when clean
+        if: ${{ steps.scan.outputs.actionable == '0' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DATE: ${{ steps.scan.outputs.date }}
+        run: |
+          set -euo pipefail
+          # Auto-resolve the alert once there are no fixable findings left, so a
+          # stale issue doesn't linger after the images are patched. The raise
+          # step above reopens/recreates it if a fixable critical/high reappears.
+          existing=$(gh issue list --label security-scan --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "${existing:-}" ]; then
+            gh issue comment "$existing" --body "Daily Trivy scan on ${DATE}: **0 actionable (fixable) findings** — all clear. Closing automatically. (No-fix CVEs remain tracked in \`.trivyignore.yaml\`.)"
+            gh issue close "$existing"
+          fi
