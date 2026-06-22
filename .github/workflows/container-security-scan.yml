@@ -51,11 +51,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Free disk space (large CUDA image)
+      - name: Free disk space + scratch on /mnt (large CUDA image)
         run: |
+          # Reclaim space on the small root FS...
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
                       /opt/hostedtoolcache/CodeQL /usr/local/.ghcup || true
-          df -h / | tail -1
+          # ...but the real fix is putting Trivy's cache + tempdir on /mnt, the
+          # runner's large ephemeral disk (~70 GB) instead of / (~20 GB). The CUDA
+          # image's uncompressed layers blow past root otherwise (no space left).
+          sudo mkdir -p /mnt/trivy-cache /mnt/trivy-tmp
+          sudo chown -R "$USER" /mnt/trivy-cache /mnt/trivy-tmp
+          echo "root:"; df -h / | tail -1
+          echo "/mnt:"; df -h /mnt | tail -1
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -74,6 +81,9 @@ jobs:
         id: scan
         env:
           TAG: ${{ github.event.inputs.tag || 'latest' }}
+          # Keep all of Trivy's heavy I/O (layer extraction scratch) off the small
+          # root FS — pairs with --cache-dir below.
+          TMPDIR: /mnt/trivy-tmp
         run: |
           set -euo pipefail
           DATE=$(date -u +%Y-%m-%d)
@@ -93,12 +103,16 @@ jobs:
             echo "| --- | --- | --- | --- | --- |"
           } > "$REPORT"
           # JSON drives the summary + an artifact; `trivy convert` derives SARIF
-          # without re-scanning. Pull→scan→remove keeps peak disk bounded.
+          # without re-scanning. `--image-src remote` pulls straight from the
+          # registry into the /mnt cache (no docker daemon copy + no /tmp
+          # docker-export — that double-copy of the multi-GB CUDA image is what
+          # exhausted root). Clear the cache between images to bound peak disk.
           for img in $IMAGES; do
             ref="${ORG}/${img}:${TAG}"; f="artifacts/${img}.json"
             echo "::group::scan ${img}"
-            docker pull -q "$ref"
-            trivy image --quiet --scanners vuln --ignorefile "$IGNORE" --format json -o "$f" "$ref"
+            trivy image --quiet --scanners vuln --image-src remote \
+              --cache-dir /mnt/trivy-cache --ignorefile "$IGNORE" \
+              --format json -o "$f" "$ref"
             trivy convert --format sarif --output "artifacts/${img}.sarif" "$f"
             sev() { jq "[.Results[]?.Vulnerabilities[]? | select(.Severity==\"$1\")$2] | length" "$f"; }
             fc=$(sev CRITICAL ' | select((.FixedVersion//"")!="")'); nc=$(sev CRITICAL ' | select((.FixedVersion//"")=="")')
@@ -106,7 +120,8 @@ jobs:
             m=$(sev MEDIUM ''); l=$(sev LOW '')
             echo "| \`${img}\` | ${fc} / ${nc} | ${fh} / ${nh} | ${m} | ${l} |" >> "$REPORT"
             FC_T=$((FC_T+fc)); NC_T=$((NC_T+nc)); FH_T=$((FH_T+fh)); NH_T=$((NH_T+nh))
-            docker image rm "$ref" >/dev/null 2>&1 || true
+            # Drop the cached layers before the next (possibly huge) image.
+            rm -rf /mnt/trivy-cache/* 2>/dev/null || true
             echo "::endgroup::"
           done
           ACTIONABLE=$((FC_T+FH_T))
