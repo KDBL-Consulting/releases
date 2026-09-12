@@ -13,6 +13,11 @@
 # non-empty FixedVersion means the acceptance is over and a rebuild clears it.
 #
 # Reviewed: 2026-09-12 (against the 0.1.40 images). Re-review by: 2026-12-11.
+#
+# Dropped 2026-09-12: CVE-2026-40393 (mesa) — no longer reported in either
+# docling image (kdoc-extractor is on Debian trixie, kdoc-extractor-cuda on
+# Ubuntu 24.04); it resurfaces in the report by itself if a base image
+# regresses.
 
 vulnerabilities:
   - id: CVE-2023-45853
@@ -36,11 +41,4 @@ vulnerabilities:
       perl-base. No Debian fix on bookworm or trixie as of 2026-09-12 (status
       affected, no fixed version). Tracked; will clear on rebuild once a fixed
       package ships.
-    expired_at: 2026-12-11
-
-  - id: CVE-2026-40393
-    statement: >-
-      mesa (libgbm1 / libgl1-mesa-dri / libglx-mesa0 / mesa-libgallium) in the
-      docling-based extractor images. No fixed version available. Pulled in
-      transitively; reassess whether GL/mesa is required at all. Tracked.
     expired_at: 2026-12-11
