@@ -72,6 +72,9 @@ jobs:
   # ---------------------------------------------------------------------------
   discover:
     runs-on: ubuntu-latest
+    env:
+      # `secrets` is not usable in a step-level `if`; a job-level env is.
+      HAS_PAT: ${{ secrets.GHCR_READ_TOKEN != '' }}
     outputs:
       matrix: ${{ steps.images.outputs.matrix }}
       images: ${{ steps.images.outputs.images }}
@@ -133,7 +136,7 @@ jobs:
       - name: Drift check — packages tagged with this release but not in the scan set
         # Warning only. Needs a PAT (the org package listing is not available to
         # GITHUB_TOKEN); silently skipped without one.
-        if: ${{ secrets.GHCR_READ_TOKEN != '' }}
+        if: ${{ env.HAS_PAT == 'true' }}
         env:
           TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
           GH_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
