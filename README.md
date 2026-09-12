@@ -26,8 +26,23 @@ Every release is published here with **release notes** (see the [Releases](../..
 | --- | --- |
 | `ghcr.io/kdbl-consulting/kdbl-worker` | Core service image — runs the API, indexing workers, metadata workers, extraction host, and operator CLI (selected by command) |
 | `ghcr.io/kdbl-consulting/kdbl-ui` | Operator web console |
-| `ghcr.io/kdbl-consulting/docling-extractor` | Content extractor (CPU) |
-| `ghcr.io/kdbl-consulting/docling-extractor-cuda` | Content extractor (GPU / CUDA) |
+| `ghcr.io/kdbl-consulting/postgres` | Database (PostgreSQL with the extensions K-Lake needs; pinned `18-pgvector` tag) |
+| `ghcr.io/kdbl-consulting/kdbl-pgbouncer` | Database connection pooler |
+| `ghcr.io/kdbl-consulting/kdbl-valkey` | Work queue / cache |
+| `ghcr.io/kdbl-consulting/kdbl-nginx` | Unprivileged reverse proxy / static serving |
+| `ghcr.io/kdbl-consulting/kdbl-tunneld` | Outbound tunnel daemon for MCP access |
+| `ghcr.io/kdbl-consulting/kdoc-extractor` | Document extractor (CPU) |
+| `ghcr.io/kdbl-consulting/kdoc-extractor-cuda` | Document extractor (GPU / CUDA) |
+| `ghcr.io/kdbl-consulting/kdoc2-extractor` | Document extractor, second-generation engine |
+| `ghcr.io/kdbl-consulting/klex-extractor` | Fast text extractor (broad format coverage) |
+| `ghcr.io/kdbl-consulting/kvision-extractor-cuda` | OCR / vision extractor (GPU) |
+| `ghcr.io/kdbl-consulting/vlm-ocr-extractor` | Vision-language OCR extractor |
+| `ghcr.io/kdbl-consulting/unlimited-ocr-extractor-cuda` | Optional OCR plugin (GPU) |
+| `ghcr.io/kdbl-consulting/kmedia-extractor` / `-cuda` | Audio / video transcription (CPU / GPU) |
+| `ghcr.io/kdbl-consulting/kvec-embedder` / `-cuda` | Embedding service (CPU / GPU) |
+| `ghcr.io/kdbl-consulting/kgraph-enricher` / `-cuda` | Entity enrichment (CPU / GPU) |
+
+The authoritative list for a given release is the Helm chart (`oci://ghcr.io/kdbl-consulting/kdbl`, `global.azure.images`) — the daily scan below derives its image set from it.
 
 > The API and the worker/metadata/extraction services share the single `kdbl-worker` image and are selected at runtime by the container command — there is no separate API image.
 

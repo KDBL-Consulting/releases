@@ -8,30 +8,39 @@
 # package ships). This is acceptance-with-tracking, NOT a claim of
 # non-exploitability unless explicitly stated.
 #
-# Reviewed: 2026-06-12. Re-review by: 2026-09-12.
+# Re-review recipe: scan the current release WITHOUT this file and grep for each
+# id — `trivy image --scanners vuln --image-src remote --format json <ref>`; a
+# non-empty FixedVersion means the acceptance is over and a rebuild clears it.
+#
+# Reviewed: 2026-09-12 (against the 0.1.40 images). Re-review by: 2026-12-11.
 
 vulnerabilities:
   - id: CVE-2023-45853
     statement: >-
-      zlib1g (MiniZip). No fixed version in Debian bookworm. The vulnerable
-      MiniZip contrib code is not used by the kdbl binaries. Tracked.
-    expired_at: 2026-09-12
+      zlib1g (MiniZip). Debian bookworm marks it will_not_fix (no fixed
+      version; 2026-09-12: still 1:1.2.13.dfsg-1 in kdbl-worker / kdbl-ui).
+      The vulnerable MiniZip contrib code is not used by the kdbl binaries.
+      Clears when the bookworm-based images move to trixie. Tracked.
+    expired_at: 2026-12-11
 
   - id: CVE-2026-42496
     statement: >-
-      perl-base. No upstream Debian/Ubuntu fix available as of 2026-06-12.
-      Tracked; will clear on rebuild once a fixed package ships.
-    expired_at: 2026-09-12
+      perl-base. Debian status fix_deferred on both bookworm (5.36.0-7+deb12u3,
+      kdbl-worker / kdbl-ui) and trixie (5.40.1-6, the extractors) as of
+      2026-09-12; no fixed package. Tracked; will clear on rebuild once a
+      fixed package ships.
+    expired_at: 2026-12-11
 
   - id: CVE-2026-8376
     statement: >-
-      perl-base. No upstream Debian/Ubuntu fix available as of 2026-06-12.
-      Tracked; will clear on rebuild once a fixed package ships.
-    expired_at: 2026-09-12
+      perl-base. No Debian fix on bookworm or trixie as of 2026-09-12 (status
+      affected, no fixed version). Tracked; will clear on rebuild once a fixed
+      package ships.
+    expired_at: 2026-12-11
 
   - id: CVE-2026-40393
     statement: >-
       mesa (libgbm1 / libgl1-mesa-dri / libglx-mesa0 / mesa-libgallium) in the
-      docling extractor. No fixed version available as of 2026-06-12. Pulled in
+      docling-based extractor images. No fixed version available. Pulled in
       transitively; reassess whether GL/mesa is required at all. Tracked.
-    expired_at: 2026-09-12
+    expired_at: 2026-12-11
