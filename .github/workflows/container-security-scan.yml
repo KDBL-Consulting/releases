@@ -166,7 +166,7 @@ jobs:
       - name: Warm the Trivy vulnerability DB (shared by the scan jobs)
         # Twenty parallel jobs each pulling the DB from ghcr.io/aquasecurity is
         # how you meet TOOMANYREQUESTS. Download once, cache by date.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: db-cache
         with:
           path: ${{ runner.temp }}/trivy-db
@@ -209,7 +209,7 @@ jobs:
 
       - name: Restore the Trivy DBs
         id: db-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ runner.temp }}/trivy-db
           key: trivy-db-${{ needs.discover.outputs.date }}-${{ needs.discover.outputs.trivy_version }}
