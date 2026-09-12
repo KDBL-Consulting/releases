@@ -1,10 +1,22 @@
 name: container-security-scan
 
-# Daily vulnerability scan of the published KDBL container images. Pulls each
-# image from GHCR, scans with Trivy (OS + language dependencies), commits a
-# rolling summary that separates ACTIONABLE (a fix is available) from NO-FIX
-# (no upstream patch yet) findings, keeps detailed SARIF/JSON as artifacts, and
-# raises an issue when there are actionable (fixable) critical/high findings.
+# Daily vulnerability scan of the published KDBL container images.
+#
+# WHAT IS SCANNED. The image set is derived from the published Helm chart
+# (oci://ghcr.io/kdbl-consulting/kdbl): every image the chart references on
+# ghcr.io/kdbl-consulting, at the tag the chart pins (the release version for
+# our images, `18-pgvector` for postgres). A hand-maintained list drifted twice
+# (the legacy docling-extractor names were scanned for months after the release
+# stopped publishing them), so the list is now computed, the same way the
+# product release computes its mirror set. `EXTRA_IMAGES` covers the images a
+# release publishes that the chart's image map does not reference.
+#
+# HOW. One matrix job per image (fail-fast off — one broken pull does not hide
+# the other nineteen), Trivy OS + library scan against the linux/amd64 manifest,
+# then a report job that fans the results in, commits a rolling summary that
+# separates ACTIONABLE (a fix is available) from NO-FIX (no upstream patch yet)
+# findings, keeps detailed SARIF/JSON as artifacts, and raises an issue when
+# there are actionable critical/high findings.
 #
 # Accepted CVEs (e.g. no-fix OS packages, with justification + expiry) live in
 # .trivyignore.yaml and are excluded from the report and the alert.
@@ -13,24 +25,27 @@ name: container-security-scan
 # was clean at release can pick up new findings — this catches that, and tells
 # you which ones you can actually do something about.
 #
-# Auth to pull the private packages: set a repo secret `GHCR_READ_TOKEN` (a PAT
-# with `read:packages`). Without it the job falls back to the repo GITHUB_TOKEN,
-# which only works if each package grants this repo access
-# (Package → Package settings → Manage Actions access → add `releases`).
+# Auth: the packages are public, so anonymous pulls work; the repo secret
+# `GHCR_READ_TOKEN` (a PAT with `read:packages`) lifts the anonymous rate limit
+# and enables the drift check (org package listing). Falls back to GITHUB_TOKEN.
 #
 # SARIF is kept as artifacts. To surface it in the Security tab, add a
-# `github/codeql-action/upload-sarif` step — needs a public repo or GitHub
-# Advanced Security on a private one.
+# `github/codeql-action/upload-sarif` step (needs a public repo or GHAS).
 
 on:
   schedule:
     - cron: '17 6 * * *'   # daily 06:17 UTC
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'Image tag to scan'
+      version:
+        description: 'Chart version to scan (default: newest published chart)'
         required: false
-        default: 'latest'
+        default: ''
+      dry_run:
+        description: 'Scan and build the report, but do not commit it or touch the alert issue'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write   # commit the report
@@ -43,26 +58,141 @@ concurrency:
 
 env:
   ORG: ghcr.io/kdbl-consulting
-  IMAGES: 'kdbl-worker kdbl-ui docling-extractor docling-extractor-cuda'
+  CHART: oci://ghcr.io/kdbl-consulting/kdbl
+  # Published every release but absent from the chart's image map (mirrors
+  # EXTRAS in the product repo's scripts/release_images.py):
+  #   kdoc-extractor-cuda          the GPU docling build — operators select it by
+  #                                overriding global.azure.images.docling.image
+  #   unlimited-ocr-extractor-cuda optional OCR plugin, selectable per source
+  EXTRA_IMAGES: 'kdoc-extractor-cuda unlimited-ocr-extractor-cuda'
 
 jobs:
-  scan:
+  # ---------------------------------------------------------------------------
+  # Resolve the chart, derive the image set, warm the Trivy DB once.
+  # ---------------------------------------------------------------------------
+  discover:
     runs-on: ubuntu-latest
+    env:
+      # `secrets` is not usable in a step-level `if`; a job-level env is.
+      HAS_PAT: ${{ secrets.GHCR_READ_TOKEN != '' }}
+    outputs:
+      matrix: ${{ steps.images.outputs.matrix }}
+      images: ${{ steps.images.outputs.images }}
+      chart_version: ${{ steps.chart.outputs.chart_version }}
+      app_version: ${{ steps.chart.outputs.app_version }}
+      date: ${{ steps.chart.outputs.date }}
+      trivy_version: ${{ steps.trivy.outputs.version }}
+    steps:
+      - name: Log in to GHCR (helm)
+        env:
+          TOKEN: ${{ secrets.GHCR_READ_TOKEN || github.token }}
+        run: |
+          echo "$TOKEN" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin \
+            || echo "::notice::helm registry login failed; continuing anonymously (chart is public)"
+
+      - name: Resolve the published chart
+        id: chart
+        env:
+          REQUESTED: ${{ github.event.inputs.version }}
+        run: |
+          set -euo pipefail
+          ver_flag=()
+          [ -n "${REQUESTED}" ] && ver_flag=(--version "${REQUESTED}")
+          helm show chart "$CHART" "${ver_flag[@]}" > chart.yaml
+          CHART_VERSION=$(yq '.version' chart.yaml)
+          APP_VERSION=$(yq '.appVersion' chart.yaml)
+          helm show values "$CHART" --version "$CHART_VERSION" > values.yaml
+          echo "chart ${CHART_VERSION} (appVersion ${APP_VERSION})"
+          {
+            echo "chart_version=${CHART_VERSION}"
+            echo "app_version=${APP_VERSION}"
+            echo "date=$(date -u +%Y-%m-%d)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Derive the image set from the chart
+        id: images
+        env:
+          APP_VERSION: ${{ steps.chart.outputs.app_version }}
+        run: |
+          set -euo pipefail
+          # Every chart image on our registry, at the tag the chart pins
+          # (empty tag = the release version, exactly as the templates render it).
+          yq '.global.azure.images[] | select(.registry == "ghcr.io/kdbl-consulting") | .image + " " + (.tag // "")' values.yaml \
+            > chart-images.txt
+          tr " " "\n" <<< "$EXTRA_IMAGES" >> chart-images.txt
+          : > images.txt
+          while read -r image tag; do
+            [ -n "$image" ] || continue
+            echo "${image} ${tag:-$APP_VERSION}" >> images.txt
+          done < chart-images.txt
+          sort -u -o images.txt images.txt
+          echo "image set ($(wc -l < images.txt)):"; cat images.txt
+          MATRIX=$(jq -c -R -n '[inputs | select(length>0) | split(" ") | {image: .[0], tag: .[1]}]' images.txt)
+          {
+            echo "matrix=${MATRIX}"
+            echo "images<<EOF"; cat images.txt; echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Drift check — packages tagged with this release but not in the scan set
+        # Warning only. Needs a PAT (the org package listing is not available to
+        # GITHUB_TOKEN); silently skipped without one.
+        if: ${{ env.HAS_PAT == 'true' }}
+        env:
+          TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+          GH_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+          APP_VERSION: ${{ steps.chart.outputs.app_version }}
+        run: |
+          set -uo pipefail
+          pkgs=$(gh api --paginate "orgs/kdbl-consulting/packages?package_type=container" --jq '.[].name' 2>/dev/null) \
+            || { echo "::notice::could not list org packages (token lacks read:packages?); skipping drift check"; exit 0; }
+          for p in $pkgs; do
+            [ "$p" = "kdbl" ] && continue   # the chart itself
+            grep -q "^${p} " images.txt && continue
+            if gh api "orgs/kdbl-consulting/packages/container/${p}/versions?per_page=100" \
+                 --jq '.[].metadata.container.tags[]' 2>/dev/null | grep -qx "$APP_VERSION"; then
+              echo "::warning title=scan drift::ghcr.io/kdbl-consulting/${p} is tagged ${APP_VERSION} but is not in the scan set — add it to EXTRA_IMAGES or the chart"
+            fi
+          done
+
+      - name: Install Trivy
+        id: trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sudo sh -s -- -b /usr/local/bin
+          v=$(trivy --version | head -1 | awk '{print $2}')
+          echo "version=v${v}" >> "$GITHUB_OUTPUT"
+          echo "trivy v${v}"
+
+      - name: Warm the Trivy vulnerability DB (shared by the scan jobs)
+        # Twenty parallel jobs each pulling the DB from ghcr.io/aquasecurity is
+        # how you meet TOOMANYREQUESTS. Download once, cache by date.
+        uses: actions/cache@v5
+        id: db-cache
+        with:
+          path: ${{ runner.temp }}/trivy-db
+          key: trivy-db-${{ steps.chart.outputs.date }}-${{ steps.trivy.outputs.version }}
+      - name: Download the Trivy DBs
+        if: steps.db-cache.outputs.cache-hit != 'true'
+        run: |
+          trivy image --cache-dir "${RUNNER_TEMP}/trivy-db" --download-db-only
+          trivy image --cache-dir "${RUNNER_TEMP}/trivy-db" --download-java-db-only
+          du -sh "${RUNNER_TEMP}/trivy-db"
+
+  # ---------------------------------------------------------------------------
+  # One job per image.
+  # ---------------------------------------------------------------------------
+  scan:
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include: ${{ fromJson(needs.discover.outputs.matrix) }}
+    name: scan ${{ matrix.image }}
     steps:
       - uses: actions/checkout@v7
-
-      - name: Free disk space + scratch on /mnt (large CUDA image)
-        run: |
-          # Reclaim space on the small root FS...
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
-                      /opt/hostedtoolcache/CodeQL /usr/local/.ghcup || true
-          # ...but the real fix is putting Trivy's cache + tempdir on /mnt, the
-          # runner's large ephemeral disk (~70 GB) instead of / (~20 GB). The CUDA
-          # image's uncompressed layers blow past root otherwise (no space left).
-          sudo mkdir -p /mnt/trivy-cache /mnt/trivy-tmp
-          sudo chown -R "$USER" /mnt/trivy-cache /mnt/trivy-tmp
-          echo "root:"; df -h / | tail -1
-          echo "/mnt:"; df -h /mnt | tail -1
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -71,84 +201,156 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_READ_TOKEN || github.token }}
 
-      - name: Install Trivy
+      - name: Install Trivy ${{ needs.discover.outputs.trivy_version }}
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-            | sudo sh -s -- -b /usr/local/bin
+            | sudo sh -s -- -b /usr/local/bin "${{ needs.discover.outputs.trivy_version }}"
           trivy --version
 
-      - name: Scan images
-        id: scan
+      - name: Restore the Trivy DBs
+        id: db-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ runner.temp }}/trivy-db
+          key: trivy-db-${{ needs.discover.outputs.date }}-${{ needs.discover.outputs.trivy_version }}
+
+      - name: Scan ${{ matrix.image }}:${{ matrix.tag }}
         env:
-          TAG: ${{ github.event.inputs.tag || 'latest' }}
-          # Keep all of Trivy's heavy I/O (layer extraction scratch) off the small
-          # root FS — pairs with --cache-dir below.
-          TMPDIR: /mnt/trivy-tmp
+          IMAGE: ${{ matrix.image }}
+          TAG: ${{ matrix.tag }}
+          DB_HIT: ${{ steps.db-cache.outputs.cache-hit }}
+          TMPDIR: ${{ runner.temp }}/trivy-tmp
         run: |
           set -euo pipefail
-          DATE=$(date -u +%Y-%m-%d)
-          IGNORE="${GITHUB_WORKSPACE}/.trivyignore.yaml"
+          mkdir -p "$TMPDIR" out
+          df -h "$RUNNER_TEMP" | tail -1
+          skip=()
+          [ "$DB_HIT" = "true" ] && skip=(--skip-db-update --skip-java-db-update)
+          ref="${ORG}/${IMAGE}:${TAG}"
+          # `--image-src remote` pulls straight from the registry into the cache
+          # (no docker-daemon copy, no docker-export — the double copy of a
+          # multi-GB CUDA image is what exhausted the runner disk in June).
+          trivy image --quiet --scanners vuln --image-src remote --platform linux/amd64 \
+            --timeout 30m --cache-dir "${RUNNER_TEMP}/trivy-db" "${skip[@]}" \
+            --ignorefile "${GITHUB_WORKSPACE}/.trivyignore.yaml" \
+            --format json -o "out/${IMAGE}.json" "$ref"
+          trivy convert --format sarif --output "out/${IMAGE}.sarif" "out/${IMAGE}.json"
+          # The per-image summary the report job consumes.
+          jq -c --arg image "$IMAGE" --arg tag "$TAG" '
+            def vulns: [.Results[]?.Vulnerabilities[]?];
+            def n(sev; fixed): [vulns[] | select(.Severity==sev and (((.FixedVersion//"")!="")==fixed))] | length;
+            { image: $image, tag: $tag,
+              digest: ((.Metadata.RepoDigests // [])[0] // "" | split("@")[1] // ""),
+              build:  (.Metadata.ImageConfig.config.Labels["org.opencontainers.image.version"] // ""),
+              os:     ((.Metadata.OS // {}) | "\(.Family // "") \(.Name // "")" | ltrimstr(" ")),
+              fix_crit: n("CRITICAL"; true), nofix_crit: n("CRITICAL"; false),
+              fix_high: n("HIGH"; true),     nofix_high: n("HIGH"; false),
+              medium: ([vulns[] | select(.Severity=="MEDIUM")] | length),
+              low:    ([vulns[] | select(.Severity=="LOW")] | length) }' \
+            "out/${IMAGE}.json" > "out/${IMAGE}.summary.json"
+          cat "out/${IMAGE}.summary.json"
+
+      - name: Upload scan results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scan-${{ matrix.image }}
+          path: out/
+          retention-days: 30
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # Fan in, publish the rolling report, manage the alert issue.
+  # ---------------------------------------------------------------------------
+  report:
+    needs: [discover, scan]
+    if: ${{ !cancelled() && needs.discover.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download scan results
+        uses: actions/download-artifact@v7
+        with:
+          pattern: scan-*
+          path: results
+          merge-multiple: true
+
+      - name: Build the report
+        id: report
+        env:
+          DATE: ${{ needs.discover.outputs.date }}
+          CHART_VERSION: ${{ needs.discover.outputs.chart_version }}
+          APP_VERSION: ${{ needs.discover.outputs.app_version }}
+          IMAGES: ${{ needs.discover.outputs.images }}
+        run: |
+          set -euo pipefail
+          IGNORE=.trivyignore.yaml
           ACCEPTED=$(grep -cE '^[[:space:]]*- id:' "$IGNORE" 2>/dev/null || echo 0)
-          mkdir -p artifacts security/history
+          mkdir -p security/history
           REPORT="security/history/scan-${DATE}.md"
-          FC_T=0; NC_T=0; FH_T=0; NH_T=0
+          FC_T=0; NC_T=0; FH_T=0; NH_T=0; M_T=0; L_T=0; FAILED=(); ACTIONABLE_ROWS=()
           {
             echo "# Container security scan — ${DATE}"
             echo
-            echo "Scanned \`${TAG}\` of each published image with Trivy (OS + library)."
-            echo "Columns split **actionable** (a fixed version exists) from **no-fix** (no upstream"
-            echo "patch yet). ${ACCEPTED} accepted CVE(s) are excluded — see [\`.trivyignore.yaml\`](.trivyignore.yaml)."
+            echo "Scanned every image the published Helm chart \`kdbl\` **${CHART_VERSION}** references on"
+            echo "\`ghcr.io/kdbl-consulting\` — the release tag \`${APP_VERSION}\` plus the chart's pinned"
+            echo "infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split"
+            echo "**actionable** (a fixed version exists) from **no-fix** (no upstream patch yet)."
+            echo "${ACCEPTED} accepted CVE(s) are excluded — see [\`.trivyignore.yaml\`](.trivyignore.yaml)."
             echo
-            echo "| Image | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |"
-            echo "| --- | --- | --- | --- | --- |"
+            echo "| Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |"
+            echo "| --- | --- | --- | --- | --- | --- |"
           } > "$REPORT"
-          # JSON drives the summary + an artifact; `trivy convert` derives SARIF
-          # without re-scanning. `--image-src remote` pulls straight from the
-          # registry into the /mnt cache (no docker daemon copy + no /tmp
-          # docker-export — that double-copy of the multi-GB CUDA image is what
-          # exhausted root). Clear the cache between images to bound peak disk.
-          for img in $IMAGES; do
-            ref="${ORG}/${img}:${TAG}"; f="artifacts/${img}.json"
-            echo "::group::scan ${img}"
-            trivy image --quiet --scanners vuln --image-src remote \
-              --cache-dir /mnt/trivy-cache --ignorefile "$IGNORE" \
-              --format json -o "$f" "$ref"
-            trivy convert --format sarif --output "artifacts/${img}.sarif" "$f"
-            sev() { jq "[.Results[]?.Vulnerabilities[]? | select(.Severity==\"$1\")$2] | length" "$f"; }
-            fc=$(sev CRITICAL ' | select((.FixedVersion//"")!="")'); nc=$(sev CRITICAL ' | select((.FixedVersion//"")=="")')
-            fh=$(sev HIGH     ' | select((.FixedVersion//"")!="")'); nh=$(sev HIGH     ' | select((.FixedVersion//"")=="")')
-            m=$(sev MEDIUM ''); l=$(sev LOW '')
-            echo "| \`${img}\` | ${fc} / ${nc} | ${fh} / ${nh} | ${m} | ${l} |" >> "$REPORT"
-            FC_T=$((FC_T+fc)); NC_T=$((NC_T+nc)); FH_T=$((FH_T+fh)); NH_T=$((NH_T+nh))
-            # Drop the cached layers before the next (possibly huge) image.
-            rm -rf /mnt/trivy-cache/* 2>/dev/null || true
-            echo "::endgroup::"
-          done
+          while read -r image tag; do
+            [ -n "$image" ] || continue
+            s="results/${image}.summary.json"
+            if [ ! -s "$s" ]; then
+              echo "| \`${image}\` | \`${tag}\` | scan failed | scan failed | – | – |" >> "$REPORT"
+              FAILED+=("$image"); continue
+            fi
+            read -r fc nc fh nh m l < <(jq -r '"\(.fix_crit) \(.nofix_crit) \(.fix_high) \(.nofix_high) \(.medium) \(.low)"' "$s")
+            echo "| \`${image}\` | \`${tag}\` | ${fc} / ${nc} | ${fh} / ${nh} | ${m} | ${l} |" >> "$REPORT"
+            FC_T=$((FC_T+fc)); NC_T=$((NC_T+nc)); FH_T=$((FH_T+fh)); NH_T=$((NH_T+nh)); M_T=$((M_T+m)); L_T=$((L_T+l))
+            [ $((fc+fh)) -gt 0 ] && ACTIONABLE_ROWS+=("\`${image}:${tag}\` — ${fc} critical / ${fh} high")
+          done <<< "$IMAGES"
+          echo "| **Total** | | **${FC_T} / ${NC_T}** | **${FH_T} / ${NH_T}** | **${M_T}** | **${L_T}** |" >> "$REPORT"
           ACTIONABLE=$((FC_T+FH_T))
           {
             echo
             echo "**Actionable (fixed version available — rebuild to clear): ${FC_T} critical, ${FH_T} high.**"
             echo
             echo "No upstream fix yet: ${NC_T} critical, ${NH_T} high (tracked; re-review at expiry)."
+            if [ ${#FAILED[@]} -gt 0 ]; then
+              echo
+              echo "> **${#FAILED[@]} image(s) could not be scanned** (${FAILED[*]}) — see the workflow run. Their rows are excluded from the totals."
+            fi
             echo
-            echo "_Generated by \`.github/workflows/container-security-scan.yml\`. Detailed SARIF + JSON are attached as workflow artifacts._"
+            echo "<details><summary>Image digests (what was scanned)</summary>"
+            echo
+            echo "| Image | Digest | Build | Base OS |"
+            echo "| --- | --- | --- | --- |"
+            for s in results/*.summary.json; do
+              [ -s "$s" ] || continue
+              jq -r '"| `\(.image):\(.tag)` | `\(.digest | .[0:19])` | \(.build) | \(.os) |"' "$s"
+            done
+            echo
+            echo "</details>"
+            echo
+            echo "_Generated by \`.github/workflows/container-security-scan.yml\`. Detailed SARIF + JSON per image are attached to the workflow run as artifacts._"
           } >> "$REPORT"
           cp "$REPORT" SECURITY-REPORT.md
           {
-            echo "date=${DATE}"; echo "actionable=${ACTIONABLE}"
+            echo "actionable=${ACTIONABLE}"
             echo "fix_crit=${FC_T}"; echo "fix_high=${FH_T}"
-            echo "nofix_crit=${NC_T}"; echo "nofix_high=${NH_T}"
+            echo "failed=${#FAILED[@]}"
+            echo "actionable_rows<<EOF"; printf '%s\n' "${ACTIONABLE_ROWS[@]:-}"; echo "EOF"
           } >> "$GITHUB_OUTPUT"
           echo "----- report -----"; cat SECURITY-REPORT.md
-
-      - name: Upload detailed reports (SARIF + JSON)
-        uses: actions/upload-artifact@v7
-        with:
-          name: trivy-reports-${{ steps.scan.outputs.date }}
-          path: artifacts/
-          retention-days: 30
+          { echo "## Container security scan — ${DATE}"; echo; cat SECURITY-REPORT.md; } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit summary report
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           set -euo pipefail
           git config user.name "kdbl-bot"
@@ -157,21 +359,28 @@ jobs:
           if git diff --cached --quiet; then
             echo "no change to commit"
           else
-            git commit -m "security: daily scan ${{ steps.scan.outputs.date }} (actionable: ${{ steps.scan.outputs.fix_crit }} crit / ${{ steps.scan.outputs.fix_high }} high)"
+            git commit -m "security: daily scan ${{ needs.discover.outputs.date }} (chart ${{ needs.discover.outputs.chart_version }}; actionable: ${{ steps.report.outputs.fix_crit }} crit / ${{ steps.report.outputs.fix_high }} high)"
+            git pull --rebase --autostash
             git push
           fi
 
       - name: Raise/refresh issue on actionable findings
-        if: ${{ steps.scan.outputs.actionable != '0' }}
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.report.outputs.actionable != '0' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          FC: ${{ steps.scan.outputs.fix_crit }}
-          FH: ${{ steps.scan.outputs.fix_high }}
-          DATE: ${{ steps.scan.outputs.date }}
+          FC: ${{ steps.report.outputs.fix_crit }}
+          FH: ${{ steps.report.outputs.fix_high }}
+          ROWS: ${{ steps.report.outputs.actionable_rows }}
+          DATE: ${{ needs.discover.outputs.date }}
+          CHART_VERSION: ${{ needs.discover.outputs.chart_version }}
         run: |
           set -euo pipefail
           title="Security: ${FC} critical / ${FH} high fixable finding(s) in published images"
-          body="Daily Trivy scan on ${DATE} found **${FC} critical** and **${FH} high** finding(s) that have a **fixed version available** — rebuild the affected image(s) to clear them. See \`SECURITY-REPORT.md\` and the workflow artifacts for detail. (No-fix CVEs are tracked in \`.trivyignore.yaml\`.)"
+          rows=$(printf '%s\n' "$ROWS" | sed '/^$/d; s/^/- /')
+          body=$(printf '%s\n' \
+            "Daily Trivy scan on ${DATE} (chart ${CHART_VERSION}) found **${FC} critical** and **${FH} high** finding(s) that have a **fixed version available** — rebuild the affected image(s) to clear them." \
+            "" "Affected:" "$rows" "" \
+            "See \`SECURITY-REPORT.md\` and the workflow artifacts for detail. (No-fix CVEs are tracked in \`.trivyignore.yaml\`.)")
           gh label create security-scan --color B60205 --description "Automated container scan findings" 2>/dev/null || true
           existing=$(gh issue list --label security-scan --state open --json number --jq '.[0].number' 2>/dev/null || true)
           if [ -n "${existing:-}" ]; then
@@ -181,10 +390,10 @@ jobs:
           fi
 
       - name: Close the scan issue when clean
-        if: ${{ steps.scan.outputs.actionable == '0' }}
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.report.outputs.actionable == '0' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          DATE: ${{ steps.scan.outputs.date }}
+          DATE: ${{ needs.discover.outputs.date }}
         run: |
           set -euo pipefail
           # Auto-resolve the alert once there are no fixable findings left, so a
@@ -195,3 +404,9 @@ jobs:
             gh issue comment "$existing" --body "Daily Trivy scan on ${DATE}: **0 actionable (fixable) findings** — all clear. Closing automatically. (No-fix CVEs remain tracked in \`.trivyignore.yaml\`.)"
             gh issue close "$existing"
           fi
+
+      - name: Fail the run if any image could not be scanned
+        if: ${{ steps.report.outputs.failed != '0' }}
+        run: |
+          echo "::error::${{ steps.report.outputs.failed }} image(s) failed to scan — the report was published without them"
+          exit 1
