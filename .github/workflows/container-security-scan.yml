@@ -64,7 +64,7 @@ env:
   #   kdoc-extractor-cuda          the GPU docling build — operators select it by
   #                                overriding global.azure.images.docling.image
   #   unlimited-ocr-extractor-cuda optional OCR plugin, selectable per source
-  EXTRA_IMAGES: 'kdoc-extractor-cuda unlimited-ocr-extractor-cuda'
+  EXTRA_IMAGES: 'unlimited-ocr-extractor-cuda'
 
 jobs:
   # ---------------------------------------------------------------------------
