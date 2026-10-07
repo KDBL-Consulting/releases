@@ -61,9 +61,9 @@ env:
   CHART: oci://ghcr.io/kdbl-consulting/kdbl
   # Published every release but absent from the chart's image map (mirrors
   # EXTRAS in the product repo's scripts/release_images.py):
-  #   kdoc-extractor-cuda          the GPU docling build — operators select it by
-  #                                overriding global.azure.images.docling.image
   #   unlimited-ocr-extractor-cuda optional OCR plugin, selectable per source
+  # (kdoc-extractor and kdoc-extractor-cuda were retired in 0.1.47; kdoc2 is in
+  # the chart's image map and needs no entry here.)
   EXTRA_IMAGES: 'unlimited-ocr-extractor-cuda'
 
 jobs:
