@@ -31,9 +31,8 @@ Every release is published here with **release notes** (see the [Releases](../..
 | `ghcr.io/kdbl-consulting/kdbl-valkey` | Work queue / cache |
 | `ghcr.io/kdbl-consulting/kdbl-nginx` | Unprivileged reverse proxy / static serving |
 | `ghcr.io/kdbl-consulting/kdbl-tunneld` | Outbound tunnel daemon for MCP access |
-| `ghcr.io/kdbl-consulting/kdoc-extractor` | Document extractor (CPU) |
-| `ghcr.io/kdbl-consulting/kdoc-extractor-cuda` | Document extractor (GPU / CUDA) |
-| `ghcr.io/kdbl-consulting/kdoc2-extractor` | Document extractor, second-generation engine |
+| `ghcr.io/kdbl-consulting/kdoc2-extractor` | Document extractor (CPU) |
+| `ghcr.io/kdbl-consulting/kdoc2-extractor-cuda` | Document extractor (GPU / CUDA) |
 | `ghcr.io/kdbl-consulting/klex-extractor` | Fast text extractor (broad format coverage) |
 | `ghcr.io/kdbl-consulting/kvision-extractor-cuda` | OCR / vision extractor (GPU) |
 | `ghcr.io/kdbl-consulting/vlm-ocr-extractor` | Vision-language OCR extractor |
