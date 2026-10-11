@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-10
+# Container security scan — 2026-10-11
 
 Scanned every image the published Helm chart `kdbl` **0.1.51** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.51` plus the chart's pinned
