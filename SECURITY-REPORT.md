@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-11
+# Container security scan — 2026-10-12
 
 Scanned every image the published Helm chart `kdbl` **0.1.51** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.51` plus the chart's pinned
@@ -24,15 +24,15 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `kmedia-extractor-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 580 | 28 |
 | `kvec-embedder` | `0.1.51` | 0 / 0 | 0 / 52 | 104 | 81 |
 | `kvec-embedder-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 9 | 4 |
-| `kvision-extractor-cuda` | `0.1.51` | 0 / 3 | 16 / 178 | 2787 | 457 |
+| `kvision-extractor-cuda` | `0.1.51` | 0 / 3 | 16 / 200 | 2663 | 511 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.51` | 0 / 5 | 3 / 139 | 3464 | 210 |
+| `unlimited-ocr-extractor-cuda` | `0.1.51` | 0 / 5 | 3 / 144 | 3427 | 238 |
 | `vlm-ocr-extractor` | `0.1.51` | 0 / 1 | 0 / 59 | 79 | 94 |
-| **Total** | | **0 / 20** | **24 / 1085** | **8244** | **1830** |
+| **Total** | | **0 / 20** | **24 / 1112** | **8083** | **1912** |
 
 **Actionable (fixed version available — rebuild to clear): 0 critical, 24 high.**
 
-No upstream fix yet: 20 critical, 1085 high (tracked; re-review at expiry).
+No upstream fix yet: 20 critical, 1112 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
