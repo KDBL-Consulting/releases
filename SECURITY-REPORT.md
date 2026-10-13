@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-12
+# Container security scan — 2026-10-13
 
 Scanned every image the published Helm chart `kdbl` **0.1.51** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.51` plus the chart's pinned
@@ -11,28 +11,30 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `cloud-extract-extractor` | `0.1.51` | 0 / 1 | 0 / 59 | 79 | 94 |
 | `kdbl-nginx` | `0.1.51` | 0 / 0 | 1 / 0 | 1 | 0 |
 | `kdbl-pgbouncer` | `0.1.51` | 0 / 0 | 0 / 0 | 1 | 0 |
-| `kdbl-tunneld` | `0.1.51` | 0 / 0 | 4 / 52 | 113 | 82 |
-| `kdbl-ui` | `0.1.51` | 0 / 0 | 0 / 54 | 117 | 113 |
+| `kdbl-tunneld` | `0.1.51` | 0 / 0 | 4 / 50 | 112 | 88 |
+| `kdbl-ui` | `0.1.51` | 0 / 0 | 0 / 52 | 116 | 119 |
 | `kdbl-valkey` | `0.1.51` | 0 / 0 | 0 / 0 | 1 | 0 |
-| `kdbl-worker` | `0.1.51` | 0 / 3 | 0 / 67 | 155 | 105 |
+| `kdbl-worker` | `0.1.51` | 0 / 3 | 0 / 65 | 154 | 111 |
 | `kdoc2-extractor` | `0.1.51` | 0 / 0 | 0 / 43 | 60 | 60 |
 | `kdoc2-extractor-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 9 | 4 |
 | `kgraph-enricher` | `0.1.51` | 0 / 0 | 0 / 44 | 64 | 63 |
 | `kgraph-enricher-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 15 | 6 |
-| `klex-extractor` | `0.1.51` | 0 / 1 | 0 / 80 | 119 | 164 |
-| `kmedia-extractor` | `0.1.51` | 0 / 6 | 0 / 258 | 487 | 265 |
-| `kmedia-extractor-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 580 | 28 |
-| `kvec-embedder` | `0.1.51` | 0 / 0 | 0 / 52 | 104 | 81 |
+| `klex-extractor` | `0.1.51` | 0 / 1 | 0 / 78 | 118 | 170 |
+| `kmedia-extractor` | `0.1.51` | 0 / 6 | 0 / 256 | 486 | 271 |
+| `kmedia-extractor-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 592 | 28 |
+| `kvec-embedder` | `0.1.51` | 0 / 0 | 0 / 50 | 103 | 87 |
 | `kvec-embedder-cuda` | `0.1.51` | 0 / 0 | 0 / 0 | 9 | 4 |
-| `kvision-extractor-cuda` | `0.1.51` | 0 / 3 | 16 / 200 | 2663 | 511 |
-| `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.51` | 0 / 5 | 3 / 144 | 3427 | 238 |
+| `kvision-extractor-cuda` | `0.1.51` | 0 / 3 | 16 / 200 | 2675 | 511 |
+| `postgres` | `18-pgvector` | scan failed | scan failed | – | – |
+| `unlimited-ocr-extractor-cuda` | `0.1.51` | 0 / 5 | 3 / 144 | 3439 | 238 |
 | `vlm-ocr-extractor` | `0.1.51` | 0 / 1 | 0 / 59 | 79 | 94 |
-| **Total** | | **0 / 20** | **24 / 1112** | **8083** | **1912** |
+| **Total** | | **0 / 20** | **24 / 1100** | **8113** | **1948** |
 
 **Actionable (fixed version available — rebuild to clear): 0 critical, 24 high.**
 
-No upstream fix yet: 20 critical, 1112 high (tracked; re-review at expiry).
+No upstream fix yet: 20 critical, 1100 high (tracked; re-review at expiry).
+
+> **1 image(s) could not be scanned** (postgres) — see the workflow run. Their rows are excluded from the totals.
 
 <details><summary>Image digests (what was scanned)</summary>
 
@@ -55,7 +57,6 @@ No upstream fix yet: 20 critical, 1112 high (tracked; re-review at expiry).
 | `kvec-embedder-cuda:0.1.51` | `sha256:6385ccea328b` | 20261005.7488 | ubuntu 24.04 |
 | `kvec-embedder:0.1.51` | `sha256:1fafa9743fc0` | 20261005.7488 | debian 12.15 |
 | `kvision-extractor-cuda:0.1.51` | `sha256:858420fa65b9` | 22.04 | ubuntu 22.04 |
-| `postgres:18-pgvector` | `sha256:d4ffdd3979a2` | 18-pgvector.20261008.8089 | alpine 3.24.2 |
 | `unlimited-ocr-extractor-cuda:0.1.51` | `sha256:94e0872d18e5` | 20261004.7388 | ubuntu 24.04 |
 | `vlm-ocr-extractor:0.1.51` | `sha256:6da1ad00cdf6` |  | debian 13.7 |
 
