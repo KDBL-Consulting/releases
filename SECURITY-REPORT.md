@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-14
+# Container security scan — 2026-10-15
 
 Scanned every image the published Helm chart `kdbl` **0.1.52** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.52` plus the chart's pinned
@@ -16,23 +16,23 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `kdbl-valkey` | `0.1.52` | 0 / 0 | 0 / 0 | 0 | 0 |
 | `kdbl-worker` | `0.1.52` | 0 / 3 | 0 / 65 | 154 | 111 |
 | `kdoc2-extractor` | `0.1.52` | 0 / 0 | 0 / 43 | 60 | 60 |
-| `kdoc2-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 14 | 4 |
+| `kdoc2-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 16 | 4 |
 | `kgraph-enricher` | `0.1.52` | 0 / 0 | 0 / 44 | 64 | 63 |
 | `kgraph-enricher-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 20 | 6 |
-| `klex-extractor` | `0.1.52` | 0 / 1 | 2 / 76 | 118 | 170 |
-| `kmedia-extractor` | `0.1.52` | 0 / 6 | 0 / 256 | 486 | 271 |
-| `kmedia-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 669 | 28 |
+| `klex-extractor` | `0.1.52` | 0 / 1 | 0 / 76 | 117 | 187 |
+| `kmedia-extractor` | `0.1.52` | 0 / 6 | 0 / 274 | 468 | 284 |
+| `kmedia-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 671 | 37 |
 | `kvec-embedder` | `0.1.52` | 0 / 0 | 0 / 50 | 103 | 87 |
-| `kvec-embedder-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 14 | 4 |
-| `kvision-extractor-cuda` | `0.1.52` | 0 / 3 | 16 / 202 | 2647 | 531 |
+| `kvec-embedder-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 16 | 4 |
+| `kvision-extractor-cuda` | `0.1.52` | 0 / 3 | 16 / 204 | 2606 | 565 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.52` | 5 / 0 | 75 / 73 | 3438 | 240 |
+| `unlimited-ocr-extractor-cuda` | `0.1.52` | 5 / 0 | 75 / 73 | 3446 | 241 |
 | `vlm-ocr-extractor` | `0.1.52` | 0 / 1 | 0 / 59 | 79 | 94 |
-| **Total** | | **5 / 15** | **97 / 1029** | **8173** | **1970** |
+| **Total** | | **5 / 15** | **95 / 1049** | **8127** | **2044** |
 
-**Actionable (fixed version available — rebuild to clear): 5 critical, 97 high.**
+**Actionable (fixed version available — rebuild to clear): 5 critical, 95 high.**
 
-No upstream fix yet: 15 critical, 1029 high (tracked; re-review at expiry).
+No upstream fix yet: 15 critical, 1049 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
@@ -44,12 +44,12 @@ No upstream fix yet: 15 critical, 1029 high (tracked; re-review at expiry).
 | `kdbl-tunneld:0.1.52` | `sha256:67ed245bd73d` | 20261014.8275 | debian 12.15 |
 | `kdbl-ui:0.1.52` | `sha256:74522aefb5cb` | 20261014.8286 | debian 12.15 |
 | `kdbl-valkey:0.1.52` | `sha256:f07fde4b54ae` |  | alpine 3.24.1 |
-| `kdbl-worker:0.1.52` | `sha256:884165d35054` | 20261014.8312 | debian 12.15 |
+| `kdbl-worker:0.1.52` | `sha256:d67f32690565` | 20261014.8322 | debian 12.15 |
 | `kdoc2-extractor-cuda:0.1.52` | `sha256:95cf87e1c808` | 20261001.6805 | ubuntu 24.04 |
 | `kdoc2-extractor:0.1.52` | `sha256:727fa425c953` | 20261001.6805 | debian 13.7 |
 | `kgraph-enricher-cuda:0.1.52` | `sha256:ed46c49f5dc4` | 20261004.7394 | ubuntu 24.04 |
 | `kgraph-enricher:0.1.52` | `sha256:78e73e4fe9d9` | 20261004.7394 | debian 13.7 |
-| `klex-extractor:0.1.52` | `sha256:1981fad2c302` | 20261004.7342 | debian 13.7 |
+| `klex-extractor:0.1.52` | `sha256:7058cc7e398b` | 20261014.8324 | debian 13.7 |
 | `kmedia-extractor-cuda:0.1.52` | `sha256:372450d964af` | 20261005.7491 | ubuntu 24.04 |
 | `kmedia-extractor:0.1.52` | `sha256:f933813e8535` | 20261005.7492 | debian 12.15 |
 | `kvec-embedder-cuda:0.1.52` | `sha256:6385ccea328b` | 20261005.7488 | ubuntu 24.04 |
