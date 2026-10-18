@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-17
+# Container security scan — 2026-10-18
 
 Scanned every image the published Helm chart `kdbl` **0.1.52** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.52` plus the chart's pinned
@@ -8,31 +8,31 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.52` | 0 / 1 | 0 / 59 | 79 | 94 |
-| `kdbl-nginx` | `0.1.52` | 0 / 0 | 0 / 0 | 0 | 0 |
+| `cloud-extract-extractor` | `0.1.52` | 0 / 1 | 5 / 54 | 79 | 94 |
+| `kdbl-nginx` | `0.1.52` | 0 / 0 | 1 / 0 | 1 | 0 |
 | `kdbl-pgbouncer` | `0.1.52` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-tunneld` | `0.1.52` | 0 / 0 | 4 / 58 | 109 | 88 |
-| `kdbl-ui` | `0.1.52` | 0 / 0 | 0 / 60 | 108 | 119 |
+| `kdbl-tunneld` | `0.1.52` | 0 / 0 | 4 / 58 | 110 | 88 |
+| `kdbl-ui` | `0.1.52` | 0 / 0 | 0 / 64 | 112 | 119 |
 | `kdbl-valkey` | `0.1.52` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-worker` | `0.1.52` | 0 / 3 | 0 / 73 | 146 | 111 |
+| `kdbl-worker` | `0.1.52` | 0 / 3 | 0 / 73 | 150 | 111 |
 | `kdoc2-extractor` | `0.1.52` | 0 / 0 | 0 / 43 | 60 | 60 |
 | `kdoc2-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 23 | 4 |
 | `kgraph-enricher` | `0.1.52` | 0 / 0 | 0 / 44 | 64 | 63 |
 | `kgraph-enricher-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 27 | 6 |
-| `klex-extractor` | `0.1.52` | 0 / 1 | 0 / 76 | 118 | 186 |
-| `kmedia-extractor` | `0.1.52` | 0 / 6 | 0 / 291 | 452 | 283 |
+| `klex-extractor` | `0.1.52` | 0 / 1 | 5 / 71 | 118 | 187 |
+| `kmedia-extractor` | `0.1.52` | 0 / 6 | 0 / 289 | 452 | 284 |
 | `kmedia-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 678 | 37 |
 | `kvec-embedder` | `0.1.52` | 0 / 0 | 0 / 58 | 95 | 87 |
 | `kvec-embedder-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 23 | 4 |
-| `kvision-extractor-cuda` | `0.1.52` | 0 / 3 | 16 / 216 | 2578 | 596 |
+| `kvision-extractor-cuda` | `0.1.52` | 0 / 7 | 16 / 309 | 2182 | 782 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.52` | 5 / 0 | 75 / 79 | 3469 | 247 |
-| `vlm-ocr-extractor` | `0.1.52` | 0 / 1 | 0 / 59 | 79 | 94 |
-| **Total** | | **5 / 15** | **95 / 1116** | **8108** | **2079** |
+| `unlimited-ocr-extractor-cuda` | `0.1.52` | 6 / 3 | 102 / 129 | 3239 | 355 |
+| `vlm-ocr-extractor` | `0.1.52` | 0 / 1 | 5 / 54 | 79 | 94 |
+| **Total** | | **6 / 22** | **138 / 1246** | **7492** | **2375** |
 
-**Actionable (fixed version available — rebuild to clear): 5 critical, 95 high.**
+**Actionable (fixed version available — rebuild to clear): 6 critical, 138 high.**
 
-No upstream fix yet: 15 critical, 1116 high (tracked; re-review at expiry).
+No upstream fix yet: 22 critical, 1246 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
