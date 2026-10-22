@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-21
+# Container security scan — 2026-10-22
 
 Scanned every image the published Helm chart `kdbl` **0.1.52** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.52` plus the chart's pinned
@@ -8,7 +8,7 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.52` | 2 / 1 | 11 / 54 | 81 | 94 |
+| `cloud-extract-extractor` | `0.1.52` | 4 / 1 | 21 / 54 | 88 | 94 |
 | `kdbl-nginx` | `0.1.52` | 0 / 0 | 2 / 0 | 5 | 0 |
 | `kdbl-pgbouncer` | `0.1.52` | 0 / 0 | 0 / 0 | 0 | 0 |
 | `kdbl-tunneld` | `0.1.52` | 0 / 0 | 6 / 58 | 110 | 88 |
@@ -20,17 +20,17 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `kgraph-enricher` | `0.1.52` | 1 / 0 | 0 / 44 | 64 | 63 |
 | `kgraph-enricher-cuda` | `0.1.52` | 1 / 0 | 0 / 0 | 27 | 6 |
 | `klex-extractor` | `0.1.52` | 0 / 1 | 5 / 71 | 117 | 188 |
-| `kmedia-extractor` | `0.1.52` | 0 / 6 | 4 / 285 | 452 | 284 |
+| `kmedia-extractor` | `0.1.52` | 0 / 6 | 4 / 285 | 461 | 284 |
 | `kmedia-extractor-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 678 | 37 |
 | `kvec-embedder` | `0.1.52` | 0 / 0 | 0 / 58 | 95 | 87 |
 | `kvec-embedder-cuda` | `0.1.52` | 0 / 0 | 0 / 0 | 23 | 4 |
-| `kvision-extractor-cuda` | `0.1.52` | 2 / 18 | 25 / 517 | 1782 | 1182 |
+| `kvision-extractor-cuda` | `0.1.52` | 4 / 18 | 34 / 517 | 1786 | 1182 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.52` | 9 / 14 | 115 / 373 | 2806 | 829 |
-| `vlm-ocr-extractor` | `0.1.52` | 2 / 1 | 11 / 54 | 81 | 94 |
-| **Total** | | **17 / 44** | **179 / 1696** | **6670** | **3250** |
+| `unlimited-ocr-extractor-cuda` | `0.1.52` | 11 / 14 | 125 / 373 | 2813 | 829 |
+| `vlm-ocr-extractor` | `0.1.52` | 4 / 1 | 21 / 54 | 88 | 94 |
+| **Total** | | **25 / 44** | **218 / 1696** | **6704** | **3250** |
 
-**Actionable (fixed version available — rebuild to clear): 17 critical, 179 high.**
+**Actionable (fixed version available — rebuild to clear): 25 critical, 218 high.**
 
 No upstream fix yet: 44 critical, 1696 high (tracked; re-review at expiry).
 
