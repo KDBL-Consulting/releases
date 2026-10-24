@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-23
+# Container security scan — 2026-10-24
 
 Scanned every image the published Helm chart `kdbl` **0.1.53** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.53` plus the chart's pinned
@@ -8,29 +8,29 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.53` | 0 / 1 | 0 / 54 | 78 | 94 |
-| `kdbl-nginx` | `0.1.53` | 0 / 0 | 0 / 0 | 0 | 0 |
+| `cloud-extract-extractor` | `0.1.53` | 0 / 1 | 0 / 54 | 79 | 94 |
+| `kdbl-nginx` | `0.1.53` | 0 / 0 | 1 / 0 | 0 | 0 |
 | `kdbl-oracle-client` | `0.1.53` | 0 / 0 | 0 / 56 | 87 | 83 |
 | `kdbl-pgbouncer` | `0.1.53` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-tunneld` | `0.1.53` | 0 / 0 | 1 / 58 | 95 | 87 |
+| `kdbl-tunneld` | `0.1.53` | 0 / 0 | 1 / 58 | 96 | 87 |
 | `kdbl-ui` | `0.1.53` | 0 / 0 | 0 / 66 | 116 | 119 |
 | `kdbl-valkey` | `0.1.53` | 0 / 0 | 0 / 0 | 0 | 0 |
 | `kdbl-worker` | `0.1.53` | 0 / 3 | 0 / 73 | 150 | 111 |
 | `kdoc2-extractor` | `0.1.53` | 0 / 0 | 0 / 43 | 60 | 60 |
 | `kdoc2-extractor-cuda` | `0.1.53` | 0 / 0 | 0 / 0 | 24 | 4 |
-| `kgraph-enricher` | `0.1.53` | 0 / 0 | 0 / 44 | 64 | 63 |
-| `kgraph-enricher-cuda` | `0.1.53` | 0 / 0 | 0 / 0 | 28 | 6 |
-| `klex-extractor` | `0.1.53` | 0 / 1 | 0 / 71 | 116 | 188 |
-| `kmedia-extractor` | `0.1.53` | 0 / 6 | 0 / 284 | 453 | 283 |
+| `kgraph-enricher` | `0.1.53` | 0 / 0 | 0 / 44 | 64 | 64 |
+| `kgraph-enricher-cuda` | `0.1.53` | 0 / 0 | 1 / 0 | 28 | 8 |
+| `klex-extractor` | `0.1.53` | 0 / 1 | 1 / 71 | 119 | 188 |
+| `kmedia-extractor` | `0.1.53` | 0 / 6 | 1 / 284 | 447 | 283 |
 | `kmedia-extractor-cuda` | `0.1.53` | 0 / 0 | 0 / 0 | 658 | 28 |
 | `kvec-embedder` | `0.1.53` | 0 / 0 | 0 / 58 | 95 | 87 |
 | `kvec-embedder-cuda` | `0.1.53` | 0 / 0 | 0 / 0 | 24 | 4 |
-| `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.53` | 4 / 0 | 26 / 1 | 44 | 8 |
-| `vlm-ocr-extractor` | `0.1.53` | 0 / 1 | 0 / 54 | 78 | 94 |
-| **Total** | | **4 / 12** | **27 / 862** | **2170** | **1319** |
+| `postgres` | `18-pgvector` | 0 / 0 | 1 / 0 | 0 | 0 |
+| `unlimited-ocr-extractor-cuda` | `0.1.53` | 5 / 0 | 27 / 1 | 45 | 10 |
+| `vlm-ocr-extractor` | `0.1.53` | 0 / 1 | 0 / 54 | 79 | 94 |
+| **Total** | | **5 / 12** | **33 / 862** | **2171** | **1324** |
 
-**Actionable (fixed version available — rebuild to clear): 4 critical, 27 high.**
+**Actionable (fixed version available — rebuild to clear): 5 critical, 33 high.**
 
 No upstream fix yet: 12 critical, 862 high (tracked; re-review at expiry).
 
