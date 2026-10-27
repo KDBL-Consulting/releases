@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-26
+# Container security scan — 2026-10-27
 
 Scanned every image the published Helm chart `kdbl` **0.1.54** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.54` plus the chart's pinned
@@ -20,15 +20,15 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `kdoc2-extractor-cuda` | `0.1.54` | 0 / 0 | 0 / 0 | 23 | 4 |
 | `kgraph-enricher` | `0.1.54` | 0 / 0 | 0 / 44 | 64 | 64 |
 | `kgraph-enricher-cuda` | `0.1.54` | 0 / 0 | 0 / 0 | 27 | 6 |
-| `klex-extractor` | `0.1.54` | 0 / 1 | 0 / 71 | 117 | 188 |
-| `kmedia-extractor` | `0.1.54` | 0 / 6 | 2 / 282 | 445 | 283 |
-| `kmedia-extractor-cuda` | `0.1.54` | 0 / 0 | 0 / 0 | 657 | 28 |
+| `klex-extractor` | `0.1.54` | 0 / 1 | 0 / 71 | 118 | 188 |
+| `kmedia-extractor` | `0.1.54` | 0 / 6 | 2 / 282 | 446 | 283 |
+| `kmedia-extractor-cuda` | `0.1.54` | 0 / 0 | 0 / 0 | 658 | 28 |
 | `kvec-embedder` | `0.1.54` | 0 / 0 | 2 / 56 | 95 | 87 |
 | `kvec-embedder-cuda` | `0.1.54` | 0 / 0 | 0 / 0 | 23 | 4 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
 | `unlimited-ocr-extractor-cuda` | `0.1.54` | 5 / 0 | 27 / 1 | 44 | 10 |
 | `vlm-ocr-extractor` | `0.1.54` | 0 / 1 | 0 / 54 | 79 | 94 |
-| **Total** | | **5 / 12** | **38 / 852** | **2162** | **1322** |
+| **Total** | | **5 / 12** | **38 / 852** | **2165** | **1322** |
 
 **Actionable (fixed version available — rebuild to clear): 5 critical, 38 high.**
 
