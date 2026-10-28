@@ -1,4 +1,4 @@
-# Container security scan — 2026-10-27
+# Container security scan — 2026-10-28
 
 Scanned every image the published Helm chart `kdbl` **0.1.54** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.54` plus the chart's pinned
@@ -12,10 +12,10 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `kdbl-nginx` | `0.1.54` | 0 / 0 | 0 / 0 | 0 | 0 |
 | `kdbl-oracle-client` | `0.1.54` | 0 / 0 | 0 / 56 | 87 | 83 |
 | `kdbl-pgbouncer` | `0.1.54` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-tunneld` | `0.1.54` | 0 / 0 | 3 / 56 | 96 | 87 |
+| `kdbl-tunneld` | `0.1.54` | 0 / 0 | 4 / 56 | 96 | 87 |
 | `kdbl-ui` | `0.1.54` | 0 / 0 | 2 / 64 | 116 | 119 |
 | `kdbl-valkey` | `0.1.54` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-worker` | `0.1.54` | 0 / 3 | 2 / 71 | 150 | 111 |
+| `kdbl-worker` | `0.1.54` | 0 / 3 | 3 / 71 | 150 | 111 |
 | `kdoc2-extractor` | `0.1.54` | 0 / 0 | 0 / 43 | 60 | 60 |
 | `kdoc2-extractor-cuda` | `0.1.54` | 0 / 0 | 0 / 0 | 23 | 4 |
 | `kgraph-enricher` | `0.1.54` | 0 / 0 | 0 / 44 | 64 | 64 |
@@ -28,9 +28,9 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
 | `unlimited-ocr-extractor-cuda` | `0.1.54` | 5 / 0 | 27 / 1 | 44 | 10 |
 | `vlm-ocr-extractor` | `0.1.54` | 0 / 1 | 0 / 54 | 79 | 94 |
-| **Total** | | **5 / 12** | **38 / 852** | **2165** | **1322** |
+| **Total** | | **5 / 12** | **40 / 852** | **2165** | **1322** |
 
-**Actionable (fixed version available — rebuild to clear): 5 critical, 38 high.**
+**Actionable (fixed version available — rebuild to clear): 5 critical, 40 high.**
 
 No upstream fix yet: 12 critical, 852 high (tracked; re-review at expiry).
 
