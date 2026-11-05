@@ -1,4 +1,4 @@
-# Container security scan — 2026-11-04
+# Container security scan — 2026-11-05
 
 Scanned every image the published Helm chart `kdbl` **0.1.57** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.57` plus the chart's pinned
@@ -8,31 +8,31 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.57` | 0 / 1 | 0 / 58 | 95 | 95 |
+| `cloud-extract-extractor` | `0.1.57` | 0 / 1 | 2 / 59 | 95 | 95 |
 | `kdbl-nginx` | `0.1.57` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-oracle-client` | `0.1.57` | 0 / 0 | 0 / 32 | 99 | 82 |
+| `kdbl-oracle-client` | `0.1.57` | 0 / 0 | 2 / 33 | 99 | 82 |
 | `kdbl-pgbouncer` | `0.1.57` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-tunneld` | `0.1.57` | 0 / 0 | 1 / 32 | 102 | 84 |
-| `kdbl-ui` | `0.1.57` | 0 / 0 | 0 / 40 | 120 | 116 |
+| `kdbl-tunneld` | `0.1.57` | 0 / 0 | 3 / 33 | 102 | 84 |
+| `kdbl-ui` | `0.1.57` | 0 / 0 | 2 / 41 | 120 | 116 |
 | `kdbl-valkey` | `0.1.57` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `kdbl-worker` | `0.1.57` | 0 / 3 | 0 / 47 | 152 | 108 |
-| `kdoc2-extractor` | `0.1.57` | 0 / 0 | 0 / 44 | 77 | 61 |
-| `kdoc2-extractor-cuda` | `0.1.57` | 0 / 0 | 0 / 0 | 22 | 4 |
-| `kgraph-enricher` | `0.1.57` | 0 / 0 | 0 / 45 | 78 | 65 |
-| `kgraph-enricher-cuda` | `0.1.57` | 0 / 0 | 0 / 0 | 26 | 6 |
-| `klex-extractor` | `0.1.57` | 0 / 1 | 0 / 75 | 145 | 188 |
-| `kmedia-extractor` | `0.1.57` | 0 / 6 | 0 / 245 | 519 | 280 |
-| `kmedia-extractor-cuda` | `0.1.57` | 0 / 0 | 0 / 0 | 656 | 28 |
-| `kvec-embedder` | `0.1.57` | 0 / 0 | 0 / 32 | 99 | 84 |
-| `kvec-embedder-cuda` | `0.1.57` | 0 / 0 | 0 / 0 | 22 | 4 |
+| `kdbl-worker` | `0.1.57` | 0 / 3 | 2 / 48 | 152 | 108 |
+| `kdoc2-extractor` | `0.1.57` | 0 / 0 | 2 / 45 | 77 | 61 |
+| `kdoc2-extractor-cuda` | `0.1.57` | 0 / 0 | 2 / 0 | 22 | 4 |
+| `kgraph-enricher` | `0.1.57` | 0 / 0 | 2 / 46 | 78 | 65 |
+| `kgraph-enricher-cuda` | `0.1.57` | 0 / 0 | 2 / 0 | 26 | 6 |
+| `klex-extractor` | `0.1.57` | 0 / 1 | 2 / 76 | 145 | 188 |
+| `kmedia-extractor` | `0.1.57` | 0 / 6 | 2 / 246 | 519 | 280 |
+| `kmedia-extractor-cuda` | `0.1.57` | 0 / 0 | 2 / 0 | 656 | 28 |
+| `kvec-embedder` | `0.1.57` | 0 / 0 | 2 / 33 | 99 | 84 |
+| `kvec-embedder-cuda` | `0.1.57` | 0 / 0 | 2 / 0 | 22 | 4 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.57` | 0 / 0 | 3 / 1 | 30 | 8 |
-| `vlm-ocr-extractor` | `0.1.57` | 0 / 1 | 0 / 58 | 95 | 95 |
-| **Total** | | **0 / 12** | **4 / 709** | **2337** | **1308** |
+| `unlimited-ocr-extractor-cuda` | `0.1.57` | 0 / 0 | 5 / 1 | 30 | 8 |
+| `vlm-ocr-extractor` | `0.1.57` | 0 / 1 | 2 / 59 | 95 | 95 |
+| **Total** | | **0 / 12** | **36 / 720** | **2337** | **1308** |
 
-**Actionable (fixed version available — rebuild to clear): 0 critical, 4 high.**
+**Actionable (fixed version available — rebuild to clear): 0 critical, 36 high.**
 
-No upstream fix yet: 12 critical, 709 high (tracked; re-review at expiry).
+No upstream fix yet: 12 critical, 720 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
