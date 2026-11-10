@@ -1,4 +1,4 @@
-# Container security scan — 2026-11-09
+# Container security scan — 2026-11-10
 
 Scanned every image the published Helm chart `kdbl` **0.1.60** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.60` plus the chart's pinned
@@ -13,26 +13,26 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 | `kdbl-oracle-client` | `0.1.60` | 0 / 0 | 0 / 34 | 95 | 85 |
 | `kdbl-pgbouncer` | `0.1.60` | 0 / 0 | 0 / 0 | 1 | 0 |
 | `kdbl-tunneld` | `0.1.60` | 0 / 0 | 2 / 34 | 99 | 87 |
-| `kdbl-ui` | `0.1.60` | 0 / 0 | 0 / 42 | 116 | 119 |
+| `kdbl-ui` | `0.1.60` | 0 / 0 | 0 / 82 | 120 | 119 |
 | `kdbl-valkey` | `0.1.60` | 0 / 0 | 0 / 0 | 1 | 0 |
-| `kdbl-worker` | `0.1.60` | 0 / 3 | 0 / 49 | 149 | 111 |
+| `kdbl-worker` | `0.1.60` | 0 / 3 | 0 / 89 | 153 | 111 |
 | `kdoc2-extractor` | `0.1.60` | 0 / 0 | 0 / 46 | 79 | 65 |
-| `kdoc2-extractor-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 11 | 4 |
+| `kdoc2-extractor-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 18 | 4 |
 | `kgraph-enricher` | `0.1.60` | 0 / 0 | 0 / 47 | 80 | 68 |
-| `kgraph-enricher-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 17 | 6 |
-| `klex-extractor` | `0.1.60` | 0 / 1 | 0 / 78 | 147 | 193 |
-| `kmedia-extractor` | `0.1.60` | 0 / 6 | 0 / 257 | 496 | 286 |
-| `kmedia-extractor-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 658 | 27 |
+| `kgraph-enricher-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 30 | 6 |
+| `klex-extractor` | `0.1.60` | 0 / 1 | 0 / 118 | 151 | 193 |
+| `kmedia-extractor` | `0.1.60` | 0 / 6 | 0 / 297 | 500 | 286 |
+| `kmedia-extractor-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 674 | 28 |
 | `kvec-embedder` | `0.1.60` | 0 / 0 | 0 / 34 | 95 | 87 |
-| `kvec-embedder-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 11 | 4 |
+| `kvec-embedder-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 18 | 4 |
 | `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.60` | 0 / 0 | 3 / 1 | 21 | 8 |
+| `unlimited-ocr-extractor-cuda` | `0.1.60` | 0 / 0 | 3 / 1 | 34 | 8 |
 | `vlm-ocr-extractor` | `0.1.60` | 0 / 1 | 0 / 61 | 97 | 99 |
-| **Total** | | **0 / 12** | **5 / 744** | **2271** | **1348** |
+| **Total** | | **0 / 12** | **5 / 904** | **2343** | **1349** |
 
 **Actionable (fixed version available — rebuild to clear): 0 critical, 5 high.**
 
-No upstream fix yet: 12 critical, 744 high (tracked; re-review at expiry).
+No upstream fix yet: 12 critical, 904 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
