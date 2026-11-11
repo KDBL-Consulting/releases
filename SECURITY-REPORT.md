@@ -1,63 +1,65 @@
-# Container security scan — 2026-11-10
+# Container security scan — 2026-11-11
 
-Scanned every image the published Helm chart `kdbl` **0.1.60** references on
-`ghcr.io/kdbl-consulting` — the release tag `0.1.60` plus the chart's pinned
+Scanned every image the published Helm chart `kdbl` **0.1.61** references on
+`ghcr.io/kdbl-consulting` — the release tag `0.1.61` plus the chart's pinned
 infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 **actionable** (a fixed version exists) from **no-fix** (no upstream patch yet).
 3 accepted CVE(s) are excluded — see [`.trivyignore.yaml`](.trivyignore.yaml).
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.60` | 0 / 1 | 0 / 61 | 97 | 99 |
-| `kdbl-nginx` | `0.1.60` | 0 / 0 | 0 / 0 | 1 | 0 |
-| `kdbl-oracle-client` | `0.1.60` | 0 / 0 | 0 / 34 | 95 | 85 |
-| `kdbl-pgbouncer` | `0.1.60` | 0 / 0 | 0 / 0 | 1 | 0 |
-| `kdbl-tunneld` | `0.1.60` | 0 / 0 | 2 / 34 | 99 | 87 |
-| `kdbl-ui` | `0.1.60` | 0 / 0 | 0 / 82 | 120 | 119 |
-| `kdbl-valkey` | `0.1.60` | 0 / 0 | 0 / 0 | 1 | 0 |
-| `kdbl-worker` | `0.1.60` | 0 / 3 | 0 / 89 | 153 | 111 |
-| `kdoc2-extractor` | `0.1.60` | 0 / 0 | 0 / 46 | 79 | 65 |
-| `kdoc2-extractor-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 18 | 4 |
-| `kgraph-enricher` | `0.1.60` | 0 / 0 | 0 / 47 | 80 | 68 |
-| `kgraph-enricher-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 30 | 6 |
-| `klex-extractor` | `0.1.60` | 0 / 1 | 0 / 118 | 151 | 193 |
-| `kmedia-extractor` | `0.1.60` | 0 / 6 | 0 / 297 | 500 | 286 |
-| `kmedia-extractor-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 674 | 28 |
-| `kvec-embedder` | `0.1.60` | 0 / 0 | 0 / 34 | 95 | 87 |
-| `kvec-embedder-cuda` | `0.1.60` | 0 / 0 | 0 / 0 | 18 | 4 |
-| `postgres` | `18-pgvector` | 0 / 0 | 0 / 0 | 0 | 0 |
-| `unlimited-ocr-extractor-cuda` | `0.1.60` | 0 / 0 | 3 / 1 | 34 | 8 |
-| `vlm-ocr-extractor` | `0.1.60` | 0 / 1 | 0 / 61 | 97 | 99 |
-| **Total** | | **0 / 12** | **5 / 904** | **2343** | **1349** |
+| `cloud-extract-extractor` | `0.1.61` | 0 / 1 | 0 / 61 | 97 | 99 |
+| `kdbl-nginx` | `0.1.61` | 0 / 1 | 0 / 121 | 136 | 168 |
+| `kdbl-oracle-client` | `0.1.61` | 0 / 0 | 0 / 34 | 95 | 85 |
+| `kdbl-pgbouncer` | `0.1.61` | 0 / 0 | 0 / 57 | 84 | 73 |
+| `kdbl-tunneld` | `0.1.61` | 0 / 0 | 2 / 34 | 99 | 87 |
+| `kdbl-ui` | `0.1.61` | 0 / 0 | 0 / 98 | 128 | 119 |
+| `kdbl-valkey` | `0.1.61` | 0 / 0 | 0 / 46 | 74 | 64 |
+| `kdbl-worker` | `0.1.61` | 0 / 3 | 0 / 105 | 161 | 111 |
+| `kdoc2-extractor` | `0.1.61` | 0 / 0 | 0 / 46 | 79 | 65 |
+| `kdoc2-extractor-cuda` | `0.1.61` | 0 / 0 | 0 / 0 | 19 | 4 |
+| `kgraph-enricher` | `0.1.61` | 0 / 0 | 0 / 47 | 80 | 68 |
+| `kgraph-enricher-cuda` | `0.1.61` | 0 / 0 | 0 / 0 | 31 | 6 |
+| `klex-extractor` | `0.1.61` | 0 / 1 | 0 / 134 | 159 | 193 |
+| `kmedia-extractor` | `0.1.61` | 0 / 6 | 0 / 313 | 508 | 286 |
+| `kmedia-extractor-cuda` | `0.1.61` | 0 / 0 | 0 / 0 | 675 | 28 |
+| `kvec-embedder` | `0.1.61` | 0 / 0 | 0 / 34 | 95 | 87 |
+| `kvec-embedder-cuda` | `0.1.61` | 0 / 0 | 0 / 0 | 19 | 4 |
+| `postgres` | `18-pgvector-debian` | 0 / 1 | 0 / 120 | 142 | 141 |
+| `postgres-textsearch` | `18-pgvector-debian` | 0 / 1 | 0 / 120 | 142 | 141 |
+| `unlimited-ocr-extractor-cuda` | `0.1.61` | 0 / 0 | 3 / 1 | 35 | 8 |
+| `vlm-ocr-extractor` | `0.1.61` | 0 / 1 | 0 / 61 | 97 | 99 |
+| **Total** | | **0 / 15** | **5 / 1432** | **2955** | **1936** |
 
 **Actionable (fixed version available — rebuild to clear): 0 critical, 5 high.**
 
-No upstream fix yet: 12 critical, 904 high (tracked; re-review at expiry).
+No upstream fix yet: 15 critical, 1432 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
 | Image | Digest | Build | Base OS |
 | --- | --- | --- | --- |
-| `cloud-extract-extractor:0.1.60` | `sha256:0c773a66fda9` |  | debian 13.7 |
-| `kdbl-nginx:0.1.60` | `sha256:5dc865eb903b` | 1.30.6-alpine | alpine 3.24.2 |
-| `kdbl-oracle-client:0.1.60` | `sha256:24a514d723df` | 20261108.10493 | debian 12.15 |
-| `kdbl-pgbouncer:0.1.60` | `sha256:90823ce1f0a6` |  | alpine 3.23.4 |
-| `kdbl-tunneld:0.1.60` | `sha256:c51e672dfe95` | 20261108.10455 | debian 12.15 |
-| `kdbl-ui:0.1.60` | `sha256:ed3dab742a5d` | 20261107.10451 | debian 12.15 |
-| `kdbl-valkey:0.1.60` | `sha256:5335f308a5ca` |  | alpine 3.24.1 |
-| `kdbl-worker:0.1.60` | `sha256:a3af179952a8` | 20261108.10597 | debian 12.15 |
-| `kdoc2-extractor-cuda:0.1.60` | `sha256:b279d6dd88c5` | 20261108.10568 | ubuntu 24.04 |
-| `kdoc2-extractor:0.1.60` | `sha256:e808d3f6dcc8` | 20261108.10568 | debian 13.7 |
-| `kgraph-enricher-cuda:0.1.60` | `sha256:b27f1334c1e6` | 20261107.10388 | ubuntu 24.04 |
-| `kgraph-enricher:0.1.60` | `sha256:1239aa57ed41` | 20261107.10388 | debian 13.7 |
-| `klex-extractor:0.1.60` | `sha256:56699ea70e1a` | 20261108.10591 | debian 13.7 |
-| `kmedia-extractor-cuda:0.1.60` | `sha256:0d94086410f8` | 20261107.10453 | ubuntu 24.04 |
-| `kmedia-extractor:0.1.60` | `sha256:82f041ae0da1` | 20261107.10448 | debian 12.15 |
-| `kvec-embedder-cuda:0.1.60` | `sha256:3b322c13126d` | 20261108.10580 | ubuntu 24.04 |
-| `kvec-embedder:0.1.60` | `sha256:53c4930a0707` | 20261108.10580 | debian 12.15 |
-| `postgres:18-pgvector` | `sha256:294f130d0252` | 18-pgvector.20261108.10622 | alpine 3.24.4 |
-| `unlimited-ocr-extractor-cuda:0.1.60` | `sha256:c4e6c8cb1025` | 20261108.10603 | ubuntu 24.04 |
-| `vlm-ocr-extractor:0.1.60` | `sha256:fe6133eb2a58` |  | debian 13.7 |
+| `cloud-extract-extractor:0.1.61` | `sha256:2f1f640bdd74` |  | debian 13.7 |
+| `kdbl-nginx:0.1.61` | `sha256:a5c24dd34900` | 1.30.6 | debian 13.7 |
+| `kdbl-oracle-client:0.1.61` | `sha256:804ad3e953e5` | 20261108.10621 | debian 12.15 |
+| `kdbl-pgbouncer:0.1.61` | `sha256:8282f7c67392` |  | debian 13.7 |
+| `kdbl-tunneld:0.1.61` | `sha256:7fe21bb932ca` | 20261111.10911 | debian 12.15 |
+| `kdbl-ui:0.1.61` | `sha256:09e9908de779` | 20261111.10925 | debian 12.15 |
+| `kdbl-valkey:0.1.61` | `sha256:26c370508311` |  | debian 13.7 |
+| `kdbl-worker:0.1.61` | `sha256:e9cefc02fbb7` | 20261111.10923 | debian 12.15 |
+| `kdoc2-extractor-cuda:0.1.61` | `sha256:3555236ed337` | 20261108.10618 | ubuntu 24.04 |
+| `kdoc2-extractor:0.1.61` | `sha256:f44063c6ea3e` | 20261108.10618 | debian 13.7 |
+| `kgraph-enricher-cuda:0.1.61` | `sha256:30abfd6c2352` | 20261108.10616 | ubuntu 24.04 |
+| `kgraph-enricher:0.1.61` | `sha256:1eeb1d86a671` | 20261108.10616 | debian 13.7 |
+| `klex-extractor:0.1.61` | `sha256:5a39c504473b` | 20261108.10617 | debian 13.7 |
+| `kmedia-extractor-cuda:0.1.61` | `sha256:f3fa38a2c691` | 20261108.10619 | ubuntu 24.04 |
+| `kmedia-extractor:0.1.61` | `sha256:42b4be1c2742` | 20261108.10620 | debian 12.15 |
+| `kvec-embedder-cuda:0.1.61` | `sha256:5ba1b65a5545` | 20261108.10615 | ubuntu 24.04 |
+| `kvec-embedder:0.1.61` | `sha256:ede3d289eabb` | 20261108.10615 | debian 12.15 |
+| `postgres-textsearch:18-pgvector-debian` | `sha256:a31b6f79a917` | 18-pgvector-debian.20261111.10919 | debian 13.7 |
+| `postgres:18-pgvector-debian` | `sha256:3244bc9aa6fd` | 18-pgvector-debian.20261110.10665 | debian 13.7 |
+| `unlimited-ocr-extractor-cuda:0.1.61` | `sha256:c4e6c8cb1025` | 20261108.10603 | ubuntu 24.04 |
+| `vlm-ocr-extractor:0.1.61` | `sha256:b9a9440a8766` |  | debian 13.7 |
 
 </details>
 
