@@ -1,4 +1,4 @@
-# Container security scan — 2026-11-11
+# Container security scan — 2026-11-12
 
 Scanned every image the published Helm chart `kdbl` **0.1.61** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.61` plus the chart's pinned
@@ -56,7 +56,7 @@ No upstream fix yet: 15 critical, 1432 high (tracked; re-review at expiry).
 | `kmedia-extractor:0.1.61` | `sha256:42b4be1c2742` | 20261108.10620 | debian 12.15 |
 | `kvec-embedder-cuda:0.1.61` | `sha256:5ba1b65a5545` | 20261108.10615 | ubuntu 24.04 |
 | `kvec-embedder:0.1.61` | `sha256:ede3d289eabb` | 20261108.10615 | debian 12.15 |
-| `postgres-textsearch:18-pgvector-debian` | `sha256:a31b6f79a917` | 18-pgvector-debian.20261111.10919 | debian 13.7 |
+| `postgres-textsearch:18-pgvector-debian` | `sha256:96ed88d3e551` | 18-pgvector-debian.20261111.10932 | debian 13.7 |
 | `postgres:18-pgvector-debian` | `sha256:3244bc9aa6fd` | 18-pgvector-debian.20261110.10665 | debian 13.7 |
 | `unlimited-ocr-extractor-cuda:0.1.61` | `sha256:c4e6c8cb1025` | 20261108.10603 | ubuntu 24.04 |
 | `vlm-ocr-extractor:0.1.61` | `sha256:b9a9440a8766` |  | debian 13.7 |
