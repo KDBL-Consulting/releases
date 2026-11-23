@@ -1,4 +1,4 @@
-# Container security scan — 2026-11-22
+# Container security scan — 2026-11-23
 
 Scanned every image the published Helm chart `kdbl` **0.1.64** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.64` plus the chart's pinned
@@ -8,31 +8,31 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.64` | 0 / 1 | 0 / 64 | 124 | 115 |
-| `kdbl-nginx` | `0.1.64` | 0 / 1 | 0 / 124 | 165 | 186 |
+| `cloud-extract-extractor` | `0.1.64` | 0 / 1 | 0 / 67 | 124 | 115 |
+| `kdbl-nginx` | `0.1.64` | 0 / 1 | 56 / 71 | 169 | 182 |
 | `kdbl-oracle-client` | `0.1.64` | 0 / 0 | 0 / 37 | 100 | 89 |
-| `kdbl-pgbouncer` | `0.1.64` | 0 / 0 | 0 / 57 | 112 | 91 |
-| `kdbl-tunneld` | `0.1.64` | 0 / 0 | 1 / 37 | 109 | 95 |
-| `kdbl-ui` | `0.1.64` | 0 / 0 | 0 / 95 | 139 | 125 |
-| `kdbl-valkey` | `0.1.64` | 0 / 0 | 0 / 48 | 93 | 76 |
-| `kdbl-worker` | `0.1.64` | 0 / 3 | 0 / 108 | 185 | 122 |
-| `kdoc2-extractor` | `0.1.64` | 0 / 0 | 0 / 49 | 106 | 81 |
+| `kdbl-pgbouncer` | `0.1.64` | 0 / 0 | 0 / 60 | 112 | 91 |
+| `kdbl-tunneld` | `0.1.64` | 0 / 0 | 1 / 39 | 109 | 95 |
+| `kdbl-ui` | `0.1.64` | 0 / 0 | 0 / 97 | 139 | 125 |
+| `kdbl-valkey` | `0.1.64` | 0 / 0 | 0 / 50 | 93 | 76 |
+| `kdbl-worker` | `0.1.64` | 0 / 3 | 0 / 110 | 185 | 122 |
+| `kdoc2-extractor` | `0.1.64` | 0 / 0 | 0 / 52 | 106 | 81 |
 | `kdoc2-extractor-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 21 | 14 |
-| `kgraph-enricher` | `0.1.64` | 0 / 0 | 0 / 50 | 106 | 84 |
+| `kgraph-enricher` | `0.1.64` | 0 / 0 | 0 / 53 | 106 | 84 |
 | `kgraph-enricher-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 37 | 7 |
-| `klex-extractor` | `0.1.64` | 0 / 1 | 0 / 137 | 189 | 211 |
-| `kmedia-extractor` | `0.1.64` | 0 / 6 | 0 / 379 | 1089 | 406 |
+| `klex-extractor` | `0.1.64` | 0 / 1 | 56 / 84 | 193 | 207 |
+| `kmedia-extractor` | `0.1.64` | 0 / 6 | 0 / 381 | 1251 | 541 |
 | `kmedia-extractor-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 763 | 42 |
-| `kvec-embedder` | `0.1.64` | 0 / 0 | 0 / 37 | 108 | 95 |
+| `kvec-embedder` | `0.1.64` | 0 / 0 | 0 / 39 | 108 | 95 |
 | `kvec-embedder-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 21 | 14 |
-| `postgres-textsearch` | `18-pgvector-debian` | 0 / 1 | 0 / 125 | 122 | 169 |
+| `postgres-textsearch` | `18-pgvector-debian` | 0 / 1 | 56 / 72 | 126 | 165 |
 | `unlimited-ocr-extractor-cuda` | `0.1.64` | 0 / 0 | 3 / 1 | 41 | 18 |
-| `vlm-ocr-extractor` | `0.1.64` | 0 / 1 | 0 / 64 | 124 | 115 |
-| **Total** | | **0 / 14** | **4 / 1412** | **3754** | **2155** |
+| `vlm-ocr-extractor` | `0.1.64` | 0 / 1 | 0 / 67 | 124 | 115 |
+| **Total** | | **0 / 14** | **172 / 1280** | **3928** | **2278** |
 
-**Actionable (fixed version available — rebuild to clear): 0 critical, 4 high.**
+**Actionable (fixed version available — rebuild to clear): 0 critical, 172 high.**
 
-No upstream fix yet: 14 critical, 1412 high (tracked; re-review at expiry).
+No upstream fix yet: 14 critical, 1280 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
