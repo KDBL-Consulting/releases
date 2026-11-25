@@ -1,4 +1,4 @@
-# Container security scan — 2026-11-24
+# Container security scan — 2026-11-25
 
 Scanned every image the published Helm chart `kdbl` **0.1.64** references on
 `ghcr.io/kdbl-consulting` — the release tag `0.1.64` plus the chart's pinned
@@ -8,31 +8,31 @@ infrastructure tags — with Trivy (OS + library, linux/amd64). Columns split
 
 | Image | Tag | Critical (fix / no-fix) | High (fix / no-fix) | Medium | Low |
 | --- | --- | --- | --- | --- | --- |
-| `cloud-extract-extractor` | `0.1.64` | 0 / 1 | 0 / 67 | 126 | 115 |
-| `kdbl-nginx` | `0.1.64` | 0 / 1 | 56 / 71 | 171 | 182 |
-| `kdbl-oracle-client` | `0.1.64` | 0 / 0 | 0 / 37 | 106 | 89 |
-| `kdbl-pgbouncer` | `0.1.64` | 0 / 0 | 0 / 60 | 114 | 91 |
-| `kdbl-tunneld` | `0.1.64` | 0 / 0 | 1 / 39 | 115 | 95 |
-| `kdbl-ui` | `0.1.64` | 0 / 0 | 0 / 97 | 145 | 125 |
-| `kdbl-valkey` | `0.1.64` | 0 / 0 | 0 / 50 | 95 | 76 |
-| `kdbl-worker` | `0.1.64` | 0 / 3 | 0 / 110 | 191 | 122 |
-| `kdoc2-extractor` | `0.1.64` | 0 / 0 | 0 / 52 | 108 | 81 |
-| `kdoc2-extractor-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 21 | 14 |
-| `kgraph-enricher` | `0.1.64` | 0 / 0 | 0 / 53 | 108 | 84 |
-| `kgraph-enricher-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 37 | 7 |
-| `klex-extractor` | `0.1.64` | 0 / 1 | 56 / 84 | 195 | 207 |
-| `kmedia-extractor` | `0.1.64` | 0 / 6 | 0 / 381 | 1257 | 541 |
-| `kmedia-extractor-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 763 | 42 |
-| `kvec-embedder` | `0.1.64` | 0 / 0 | 0 / 39 | 114 | 95 |
-| `kvec-embedder-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 21 | 14 |
-| `postgres-textsearch` | `18-pgvector-debian` | 0 / 1 | 56 / 72 | 130 | 165 |
-| `unlimited-ocr-extractor-cuda` | `0.1.64` | 0 / 0 | 3 / 1 | 41 | 18 |
-| `vlm-ocr-extractor` | `0.1.64` | 0 / 1 | 0 / 67 | 126 | 115 |
-| **Total** | | **0 / 14** | **172 / 1280** | **3984** | **2278** |
+| `cloud-extract-extractor` | `0.1.64` | 0 / 1 | 1 / 67 | 129 | 113 |
+| `kdbl-nginx` | `0.1.64` | 0 / 1 | 57 / 71 | 174 | 180 |
+| `kdbl-oracle-client` | `0.1.64` | 0 / 0 | 0 / 38 | 106 | 87 |
+| `kdbl-pgbouncer` | `0.1.64` | 0 / 0 | 1 / 60 | 114 | 89 |
+| `kdbl-tunneld` | `0.1.64` | 0 / 0 | 1 / 38 | 113 | 93 |
+| `kdbl-ui` | `0.1.64` | 0 / 0 | 0 / 96 | 143 | 123 |
+| `kdbl-valkey` | `0.1.64` | 0 / 0 | 1 / 50 | 95 | 74 |
+| `kdbl-worker` | `0.1.64` | 0 / 3 | 0 / 109 | 189 | 120 |
+| `kdoc2-extractor` | `0.1.64` | 0 / 0 | 1 / 52 | 108 | 79 |
+| `kdoc2-extractor-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 30 | 14 |
+| `kgraph-enricher` | `0.1.64` | 0 / 0 | 1 / 53 | 108 | 82 |
+| `kgraph-enricher-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 51 | 7 |
+| `klex-extractor` | `0.1.64` | 0 / 1 | 57 / 84 | 198 | 205 |
+| `kmedia-extractor` | `0.1.64` | 0 / 15 | 0 / 407 | 1429 | 638 |
+| `kmedia-extractor-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 841 | 42 |
+| `kvec-embedder` | `0.1.64` | 0 / 0 | 0 / 38 | 112 | 93 |
+| `kvec-embedder-cuda` | `0.1.64` | 0 / 0 | 0 / 0 | 30 | 14 |
+| `postgres-textsearch` | `18-pgvector-debian` | 0 / 1 | 58 / 72 | 130 | 161 |
+| `unlimited-ocr-extractor-cuda` | `0.1.64` | 0 / 0 | 3 / 1 | 55 | 18 |
+| `vlm-ocr-extractor` | `0.1.64` | 0 / 1 | 1 / 67 | 129 | 113 |
+| **Total** | | **0 / 23** | **182 / 1303** | **4284** | **2345** |
 
-**Actionable (fixed version available — rebuild to clear): 0 critical, 172 high.**
+**Actionable (fixed version available — rebuild to clear): 0 critical, 182 high.**
 
-No upstream fix yet: 14 critical, 1280 high (tracked; re-review at expiry).
+No upstream fix yet: 23 critical, 1303 high (tracked; re-review at expiry).
 
 <details><summary>Image digests (what was scanned)</summary>
 
